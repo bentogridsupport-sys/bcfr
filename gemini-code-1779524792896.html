@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Voltaire · EL 12 · Candide</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════
+   RESET & ROOT
+═══════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+:root {
+  --bg: #f4f6f9;
+  --surface: #ffffff;
+  --ink: #0f172a;
+  --sub: #475569;
+  --line: #cbd5e1;
+  --radius: 14px;
+  --sidebar-width: 272px;
+  --font-serif: 'DM Serif Display', Georgia, serif;
+  --font-sans: 'DM Sans', system-ui, sans-serif;
+
+  --accent: #2563eb; /* Bleu Lumières royal et philosophique */
+  --accent-bg: #eff6ff;
+  --accent-dark: #1e3a8a;
+}
+
+[data-theme="dark"] {
+  --bg: #090d16;
+  --surface: #111827;
+  --ink: #f1f5f9;
+  --sub: #94a3b8;
+  --line: #1e293b;
+  --accent-bg: #172554;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  transition: background .3s, color .3s;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 9999; opacity: 0.4;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+}
+
+/* ═══════════════════════════════════════════
+   SIDEBAR
+═══════════════════════════════════════════ */
+aside {
+  width: var(--sidebar-width);
+  height: 100vh;
+  position: fixed;
+  left: 0; top: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--line);
+  padding: 1.8rem 1.4rem 2rem;
+  display: flex;
+  flex-direction: column;
+  z-index: 200;
+  transition: background .3s, border-color .3s;
+  overflow-y: auto;
+}
+
+.sidebar-header { margin-bottom: 2.4rem; }
+
+.el-badge {
+  display: inline-flex; align-items: center; gap: .3rem;
+  background: var(--accent); color: #fff;
+  padding: .2rem .65rem;
+  border-radius: 6px; font-weight: 600;
+  font-size: 10.5px; letter-spacing: .05em;
+  text-transform: uppercase; margin-bottom: .6rem;
+}
+
+.sidebar-logo {
+  font-family: var(--font-serif);
+  font-size: 1.3rem;
+  color: var(--ink);
+  text-decoration: none;
+  display: block;
+  line-height: 1.2;
+  letter-spacing: -.01em;
+}
+
+.sidebar-logo em {
+  font-style: italic;
+  color: var(--sub);
+}
+
+.sidebar-divider {
+  height: 1px;
+  background: var(--line);
+  margin: 1.2rem 0;
+}
+
+.nav-group { margin-bottom: 1.6rem; }
+
+.nav-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  color: var(--sub);
+  font-weight: 600;
+  display: block;
+  margin-bottom: .6rem;
+  padding-left: .35rem;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: .65rem;
+  padding: .55rem .85rem;
+  color: var(--sub);
+  text-decoration: none;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 400;
+  margin-bottom: 2px;
+  transition: all .15s;
+  border: 1px solid transparent;
+}
+
+.nav-link:hover {
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.nav-link.active {
+  background: var(--accent-bg);
+  color: var(--accent);
+  font-weight: 600;
+  border-color: color-mix(in srgb, var(--accent) 20%, transparent);
+}
+
+.nav-link-num {
+  font-size: 10px;
+  font-weight: 600;
+  opacity: .45;
+  min-width: 16px;
+  font-family: var(--font-serif);
+  font-style: italic;
+}
+
+.nav-link.active .nav-link-num { opacity: .7; }
+
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--line);
+}
+
+.theme-toggle {
+  width: 100%;
+  display: flex; align-items: center; gap: .6rem;
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: .55rem .85rem;
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  color: var(--sub);
+  cursor: pointer;
+  transition: background .15s, border-color .15s, color .15s;
+}
+
+.theme-toggle:hover {
+  background: var(--bg);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.theme-toggle .t-icon { font-size: 14px; }
+
+/* ═══════════════════════════════════════════
+   MAIN
+═══════════════════════════════════════════ */
+main {
+  flex: 1;
+  margin-left: var(--sidebar-width);
+  max-width: calc(100% - var(--sidebar-width));
+}
+
+.top-bar {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(244,246,249,.88);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
+  padding: .8rem 2.5rem;
+  display: flex; align-items: center; justify-content: space-between;
+  transition: background .3s;
+}
+
+[data-theme="dark"] .top-bar {
+  background: rgba(9,13,22,.88);
+}
+
+.breadcrumb {
+  font-size: 12px; color: var(--sub);
+  display: flex; align-items: center; gap: .4rem;
+}
+.breadcrumb span { opacity: .5; }
+
+.topbar-badges {
+  display: flex; gap: .4rem;
+}
+
+.topbar-tag {
+  font-size: 10.5px; font-weight: 600;
+  letter-spacing: .07em; text-transform: uppercase;
+  padding: .22rem .65rem; border-radius: 6px;
+  background: var(--accent-bg);
+  color: var(--accent);
+  border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+}
+
+/* ═══════════════════════════════════════════
+   CONTENT BODY
+═══════════════════════════════════════════ */
+.content-body {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 4rem 2.5rem 8rem;
+}
+
+/* ═══════════════════════════════════════════
+   SECTION ANCHORS
+═══════════════════════════════════════════ */
+.section-anchor {
+  scroll-margin-top: 80px;
+  margin-bottom: 5rem;
+}
+
+/* ═══════════════════════════════════════════
+   HERO
+═══════════════════════════════════════════ */
+.hero-eyebrow {
+  font-size: 10.5px; font-weight: 600;
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: .55rem;
+  display: flex; align-items: center; gap: .5rem;
+}
+
+.hero-eyebrow::before {
+  content: '';
+  width: 18px; height: 2px;
+  background: var(--accent);
+  border-radius: 1px;
+}
+
+h1 {
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 4.5vw, 3.2rem);
+  line-height: 1.1;
+  letter-spacing: -.02em;
+  font-weight: 400;
+  margin: .7rem 0 1rem;
+}
+
+.hero-desc {
+  font-size: 1.05rem;
+  color: var(--sub);
+  font-weight: 300;
+  line-height: 1.65;
+  margin-bottom: 2.5rem;
+  max-width: 580px;
+}
+
+/* ═══════════════════════════════════════════
+   CARDS
+═══════════════════════════════════════════ */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: transform .2s cubic-bezier(.22,1,.36,1), box-shadow .2s, border-color .2s;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 36px rgba(0,0,0,.1);
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+}
+
+.card-stripe {
+  height: 4px;
+  background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 55%, transparent));
+}
+
+.card-body { padding: 1.35rem; }
+
+.card-body h3 {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  margin-bottom: .65rem;
+  color: var(--ink);
+  display: flex; align-items: center; gap: .5rem;
+}
+
+.card-body h3::before {
+  content: '';
+  width: 5px; height: 5px;
+  background: var(--accent);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.card-body p {
+  font-size: 13.5px;
+  color: var(--sub);
+  line-height: 1.6;
+  font-weight: 300;
+}
+
+.card-body strong { color: var(--ink); font-weight: 600; }
+
+/* ═══════════════════════════════════════════
+   PROBLÉMATIQUE BOX
+═══════════════════════════════════════════ */
+.prob-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin: 2.5rem 0;
+}
+
+.prob-box {
+  background: var(--accent-bg);
+  border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+  border-left: 4px solid var(--accent);
+  padding: 1.8rem 2rem;
+  border-radius: var(--radius);
+}
+
+.prob-box .prob-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  color: var(--accent);
+  margin-bottom: .6rem;
+  display: block;
+}
+
+.prob-box p {
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  color: var(--accent-dark);
+  font-style: italic;
+  line-height: 1.4;
+}
+
+[data-theme="dark"] .prob-box p { color: var(--accent); }
+
+/* ═══════════════════════════════════════════
+   MOUVEMENT SECTIONS
+═══════════════════════════════════════════ */
+.mv-item { margin-bottom: 4rem; }
+
+.mv-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.2rem;
+  margin-bottom: 1.8rem;
+  padding-bottom: 1.2rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.mv-num {
+  width: 44px; height: 44px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-serif);
+  font-size: 1.3rem;
+  font-style: italic;
+  flex-shrink: 0;
+}
+
+.mv-title-group h2 {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: -.01em;
+  margin-bottom: .3rem;
+}
+
+.mv-lines {
+  font-size: 11.5px;
+  color: var(--sub);
+  font-style: italic;
+  font-weight: 300;
+}
+
+/* ═══════════════════════════════════════════
+   BULLET STACK
+═══════════════════════════════════════════ */
+.bullet-stack {
+  display: flex;
+  flex-direction: column;
+  gap: .6rem;
+}
+
+.bullet {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 1.15rem 1.3rem;
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 1rem;
+  align-items: start;
+  transition: border-color .15s, background .15s;
+}
+
+.bullet:hover {
+  border-color: color-mix(in srgb, var(--accent) 35%, transparent);
+  background: color-mix(in srgb, var(--accent-bg) 40%, var(--surface));
+}
+
+.bullet b {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: .03em;
+  padding-top: .05rem;
+}
+
+.bullet span {
+  font-size: 13.5px;
+  color: var(--sub);
+  line-height: 1.6;
+  font-weight: 300;
+}
+
+.quote {
+  font-style: italic;
+  color: var(--accent-dark);
+  background: var(--accent-bg);
+  padding: .05rem .35rem;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+[data-theme="dark"] .quote {
+  color: var(--accent);
+}
+
+/* ═══════════════════════════════════════════
+   SECTION HEADING
+═══════════════════════════════════════════ */
+.section-heading {
+  font-family: var(--font-serif);
+  font-size: 1.9rem;
+  font-weight: 400;
+  letter-spacing: -.015em;
+  margin-bottom: 1.5rem;
+  display: flex; align-items: center; gap: .7rem;
+}
+
+.section-heading::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+
+/* ═══════════════════════════════════════════
+   CONCLUSION CARD SPECIAL
+═══════════════════════════════════════════ */
+.concl-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: transform .2s cubic-bezier(.22,1,.36,1), box-shadow .2s, border-color .2s;
+}
+.concl-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 36px rgba(0,0,0,.1);
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+}
+.concl-card-head {
+  padding: .6rem 1.2rem;
+  background: var(--accent-bg);
+  border-bottom: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+  font-size: 10.5px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .1em;
+  color: var(--accent);
+}
+.concl-card-body {
+  padding: 1.25rem 1.35rem;
+  font-size: 13.5px;
+  color: var(--sub);
+  line-height: 1.6;
+  font-weight: 300;
+}
+.concl-card-body em { font-style: italic; color: var(--ink); }
+
+/* ═══════════════════════════════════════════
+   MOBILE
+═══════════════════════════════════════════ */
+@media (max-width: 768px) {
+  aside { transform: translateX(-100%); transition: transform .3s; }
+  aside.open { transform: translateX(0); }
+  main { margin-left: 0; max-width: 100%; }
+  .top-bar { padding: .8rem 1.2rem; }
+  .content-body { padding: 2.5rem 1.2rem 6rem; }
+  .bullet { grid-template-columns: 1fr; gap: .3rem; }
+  .mob-menu-btn { display: flex !important; }
+}
+
+.mob-menu-btn {
+  display: none;
+  width: 34px; height: 34px;
+  align-items: center; justify-content: center;
+  background: none; border: 1px solid var(--line);
+  border-radius: 9px; cursor: pointer;
+  font-size: 16px; color: var(--ink);
+}
+
+/* Progress indicator */
+.progress-bar {
+  position: fixed;
+  top: 0; left: 0;
+  height: 3px;
+  background: var(--accent);
+  z-index: 9997;
+  transition: width .1s;
+  border-radius: 0 2px 2px 0;
+}
+
+/* Animations */
+.card, .bullet, .prob-box, .mv-item {
+  animation: fade-up .4s cubic-bezier(.22,1,.36,1) both;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+.back-btn {
+  display: inline-flex; align-items: center; gap: .35rem;
+  text-decoration: none; color: var(--accent); font-size: 12.5px;
+  font-weight: 500; white-space: nowrap;
+  padding: .25rem .55rem; border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+  transition: background .15s;
+}
+.back-btn:hover { background: var(--accent-bg); }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- ═══════ SIDEBAR ═══════ -->
+<aside id="sidebar">
+  <div class="sidebar-header">
+    <div class="el-badge">📖 EL 12</div>
+    <a href="#intro" class="sidebar-logo">Le Nègre de <em>Surinam</em></a>
+    <div style="margin-top:.45rem;font-size:11.5px;color:var(--sub);font-weight:300">Voltaire · Candide · 1759</div>
+  </div>
+
+  <div class="sidebar-divider"></div>
+
+  <nav>
+    <div class="nav-group">
+      <span class="nav-label">Mise en place</span>
+      <a href="#intro" class="nav-link active"><span class="nav-link-num">01</span> Introduction</a>
+      <a href="#prob" class="nav-link"><span class="nav-link-num">02</span> Problématique</a>
+    </div>
+
+    <div class="nav-group">
+      <span class="nav-label">Analyse linéaire</span>
+      <a href="#mv1" class="nav-link"><span class="nav-link-num">I</span> Rencontre & Horreur</a>
+      <a href="#mv2" class="nav-link"><span class="nav-link-num">II</span> Discours de l'esclave</a>
+      <a href="#mv3" class="nav-link"><span class="nav-link-num">III</span> Rupture de l'Optimisme</a>
+    </div>
+
+    <div class="nav-group">
+      <span class="nav-label">Bilan</span>
+      <a href="#conclusion" class="nav-link"><span class="nav-link-num">03</span> Conclusion</a>
+    </div>
+  </nav>
+
+  <div class="sidebar-footer">
+    <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">
+      <span class="t-icon">🌙</span>
+      <span id="themeLabel">Mode sombre</span>
+    </button>
+  </div>
+</aside>
+
+<!-- ═══════ MAIN ═══════ -->
+<main>
+  <header class="top-bar">
+    <div style="display:flex;align-items:center;gap:.8rem">
+      <button class="mob-menu-btn" onclick="toggleSidebar()">☰</button>
+      <a href="index.html" class="back-btn">← Bibliothèque</a>
+      <div class="breadcrumb">
+        Français <span>›</span> <span style="color:var(--ink);font-weight:500">Voltaire · Candide (EL 12)</span>
+      </div>
+    </div>
+    <div class="topbar-badges">
+      <span class="topbar-tag">Voltaire</span>
+      <span class="topbar-tag">1759</span>
+      <span class="topbar-tag">Lumières</span>
+    </div>
+  </header>
+
+  <div class="content-body">
+
+    <!-- ── INTRO ── -->
+    <section id="intro" class="section-anchor">
+      <div class="hero-eyebrow">Explication linéaire · Français</div>
+      <h1>Chapitre 19 :<br>Le Nègre de Surinam <em style="font-style:italic;color:var(--sub)">· Voltaire</em></h1>
+      <p class="hero-desc">L'épisode le plus célèbre du conte philosophique de Voltaire, où le combat contre l'esclavage se mêle à une réfutation cinglante de l'optimisme béat.</p>
+
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-stripe"></div>
+          <div class="card-body">
+            <h3>L'auteur engagé</h3>
+            <p>François-Marie Arouet, dit <strong>Voltaire</strong>, grand défenseur des libertés et de la tolérance. Il utilise l'ironie pour éveiller la conscience morale européenne.</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-stripe"></div>
+          <div class="card-body">
+            <h3>L'œuvre : Candide</h3>
+            <p>Paru en 1759, ce conte relate les pérégrinations de Candide, confronté au Mal du monde pour détruire l'optimisme philosophique de Pangloss.</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-stripe"></div>
+          <div class="card-body">
+            <h3>Situation</h3>
+            <p>De retour d'Eldorado (le monde idéal d'égalité), le choc du réel frappe Candide à l'entrée de la colonie hollandaise de Surinam.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── PROB ── -->
+    <section id="prob" class="section-anchor">
+      <div class="section-heading">Problématiques du cours</div>
+      <div class="prob-container">
+        <div class="prob-box">
+          <span class="prob-label">Axe 1 (Dénonciation de l'Esclavage)</span>
+          <p>Comment Voltaire dénonce-t-il l’horreur de l’esclavage et la barbarie de la colonisation dans cet épisode ?</p>
+        </div>
+        <div class="prob-box">
+          <span class="prob-label">Axe 2 (Réfutation Philosophique)</span>
+          <p>En quoi cette rencontre scelle-t-elle l'effondrement définitif de la doctrine optimiste chez Candide ?</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── MV1 ── -->
+    <section id="mv1" class="section-anchor">
+      <div class="mv-item">
+        <div class="mv-header">
+          <div class="mv-num">I</div>
+          <div class="mv-title-group">
+            <h2>Une rencontre théâtralisée et l'exposition du pathétique</h2>
+            <span class="mv-lines">La description physique de l'esclave à l'entrée de Surinam</span>
+          </div>
+        </div>
+
+        <div class="bullet-stack">
+          <div class="bullet">
+            <b>Effet de contraste</b>
+            <span>La transition géographique immédiate d'Eldorado vers Surinam oppose l'abondance utopique à la misère extrême du monde colonial réel.</span>
+          </div>
+          <div class="bullet">
+            <b>Mutilation clinique</b>
+            <span>L'énumération froide des manques : <span class="quote">« n'ayant plus que la moitié de son habit [...] il manquait à ce pauvre homme la jambe gauche et la main droite »</span>. La nudité et les amputations révèlent la destruction physique de l'esclave.</span>
+          </div>
+          <div class="bullet">
+            <b>Ironie du possessif</b>
+            <span>L'utilisation de la formule <span class="quote">« mon nègre »</span> ou des rapports de propriété souligne la réification de l'humain, transformé en simple marchandise coloniale.</span>
+          </div>
+          <div class="bullet">
+            <b>Pathétique immédiat</b>
+            <span>Le registre pathétique s'ancre dans l'adjectif <span class="quote">« pauvre homme »</span> et l'attitude passive de l'esclave <span class="quote">« étendu par terre »</span>, contrastant avec la superbe des négociants européens.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── MV2 ── -->
+    <section id="mv2" class="section-anchor">
+      <div class="mv-item">
+        <div class="mv-header">
+          <div class="mv-num">II</div>
+          <div class="mv-title-group">
+            <h2>Le discours de l'esclave : un réquisitoire implacable</h2>
+            <span class="mv-lines">La froideur de la coutume et l'évaluation du prix du sucre</span>
+          </div>
+        </div>
+
+        <div class="bullet-stack">
+          <div class="bullet">
+            <b>L'euphémisme du Code Noir</b>
+            <span>Le terme neutre <span class="quote">« C’est l’usage »</span> dénonce la normalisation juridique de la barbarie. L'usage déshumanisant est traité par l'esclave comme une règle naturelle incontestable.</span>
+          </div>
+          <div class="bullet">
+            <b>Parallélisme des causes</b>
+            <span>La description froide des châtiments : <span class="quote">« Quand nous travaillons aux sucreries [...] on nous coupe la main ; quand nous voulons nous enfuir, on nous coupe la jambe »</span>. La structure parallèle et le ton informatif accentuent l'indignation du lecteur devant la cruauté banalisée.</span>
+          </div>
+          <div class="bullet">
+            <b>Formule choc du chapitre</b>
+            <span>La sentence antithétique universelle : <span class="quote">« C'est à ce prix que vous mangez du sucre en Europe »</span>. Voltaire établit une causalité morale directe et culpabilisante entre le confort des consommateurs européens et le sang des esclaves.</span>
+          </div>
+          <div class="bullet">
+            <b>Trahison maternelle</b>
+            <span>L'évocation de la mère vendant son fils : <span class="quote">« Mon cher enfant, bénis nos fétiches »</span>. Voltaire critique ici l'aveuglement religieux et la détresse extrême qui brise les instincts maternels les plus sacrés pour de l'argent.</span>
+          </div>
+          <div class="bullet">
+            <b>Raisonnement théologique</b>
+            <span>L'argumentation ironique sur la fraternité chrétienne : les prêcheurs affirment que <span class="quote">« nous sommes tous enfants d'Adam »</span>. L'esclave conclut logiquement qu'ils traitent alors leurs propres <span class="quote">« cousins »</span> de manière immonde, révélant l'hypocrisie de l'Église.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── MV3 ── -->
+    <section id="mv3" class="section-anchor">
+      <div class="mv-item">
+        <div class="mv-header">
+          <div class="mv-num">III</div>
+          <div class="mv-title-group">
+            <h2>La faillite de l'optimisme philosophique</h2>
+            <span class="mv-lines">L'indignation finale et les larmes de Candide</span>
+          </div>
+        </div>
+
+        <div class="bullet-stack">
+          <div class="bullet">
+            <b>Apostrophe à Pangloss</b>
+            <span>L'exclamation déchirante de Candide : <span class="quote">« Ô Pangloss ! tu n'avais pas deviné cette abomination »</span> marque la fin du conditionnement intellectuel du héros.</span>
+          </div>
+          <div class="bullet">
+            <b>Redéfinition de la doctrine</b>
+            <span>Le parallélisme et l'antithèse : <span class="quote">« c’est la rage de soutenir que tout est bien quand tout est mal »</span>. Candide formule lui-même la définition satirique de l'optimisme, signant sa maturité intellectuelle naissante.</span>
+          </div>
+          <div class="bullet">
+            <b>Économie de la morale</b>
+            <span>La réaction physique l'emporte sur la dissertation théologique : Candide <span class="quote">« versait des larmes »</span>. Les pleurs et l'émotion sincère condamnent définitivement l'esclavage, rendant la pitié plus efficace que la rhétorique.</span>
+          </div>
+          <div class="bullet">
+            <b>La réappropriation affective</b>
+            <span>L'utilisation de la périphrase finale <span class="quote">« son nègre »</span> témoigne du bouleversement affectif de Candide, qui regarde enfin l'esclave mutilé comme un égal méritant le respect et l'amitié.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── CONCLUSION ── -->
+    <section id="conclusion" class="section-anchor">
+      <h2 class="section-heading">Bilan de l'étude</h2>
+
+      <div class="card-grid">
+        <div class="concl-card">
+          <div class="concl-card-head">Synthèse</div>
+          <div class="concl-card-body">En masquant un pathétique insoutenable derrière une ironie mordante, Voltaire signe l'un des plus redoutables plaidoyers abolitionnistes du XVIII° siècle. La réalité matérielle de la souffrance pulvérise la thèse d'un monde harmonieux où le mal n'existerait pas.</div>
+        </div>
+        <div class="concl-card">
+          <div class="concl-card-head">Rôle dans le Conte</div>
+          <div class="concl-card-body">Cet épisode marque le tournant initiatique capital pour Candide. Il n'est plus le disciple passif de Pangloss ; face à l'injustice suprême, il commence enfin à penser par lui-même, prélude philosophique de la maxime finale : <em>« il faut cultiver notre jardin »</em>.</div>
+        </div>
+        <div class="concl-card">
+          <div class="concl-card-head">Ouvertures possibles</div>
+          <div class="concl-card-body">On peut rapprocher ce texte du chapitre de Montesquieu <em>« De l'esclavage des nègres »</em> dans <em>L'Esprit des lois</em> (1748), qui recourt également à une ironie féroce et antiphrastique pour ridiculiser les thèses esclavagistes.</div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<script>
+// ── THEME SWITCHER ──
+function toggleTheme() {
+  const html = document.documentElement;
+  const dark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', dark ? 'light' : 'dark');
+  document.getElementById('themeBtn').querySelector('.t-icon').textContent = dark ? '🌙' : '☀️';
+  document.getElementById('themeLabel').textContent = dark ? 'Mode sombre' : 'Mode clair';
+  localStorage.setItem('voltaire_theme', dark ? 'light' : 'dark');
+}
+
+const savedTheme = localStorage.getItem('voltaire_theme');
+if (savedTheme) {
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  if (savedTheme === 'dark') {
+    document.querySelector('.t-icon').textContent = '☀️';
+    document.getElementById('themeLabel').textContent = 'Mode clair';
+  }
+}
+
+// ── MOBILE SIDEBAR ──
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+// ── SCROLL & PROGRESS INDICATOR ──
+const sections = document.querySelectorAll('.section-anchor');
+const navLinks = document.querySelectorAll('.nav-link');
+
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    if (pageYOffset >= s.offsetTop - 140) current = s.getAttribute('id');
+  });
+  navLinks.forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === '#' + current) link.classList.add('active');
+  });
+
+  // Barre de progression
+  const scrolled = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+  document.getElementById('progressBar').style.width = Math.min(scrolled, 100) + '%';
+}, { passive: true });
+</script>
+</body>
+</html>

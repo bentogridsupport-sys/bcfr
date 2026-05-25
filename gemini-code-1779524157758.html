@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La Boétie · EL 9 · Révisions</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════
+   RESET & ROOT
+═══════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+:root {
+  --bg: #f5f4f0;
+  --surface: #ffffff;
+  --ink: #111110;
+  --sub: #7a7a74;
+  --line: #e2e1db;
+  --radius: 14px;
+  --sidebar-width: 272px;
+  --font-serif: 'DM Serif Display', Georgia, serif;
+  --font-sans: 'DM Sans', system-ui, sans-serif;
+
+  --accent: #8b1e2f; /* Rouge bordeaux politique/philosophique */
+  --accent-bg: #f5e6e8;
+  --accent-dark: #4a0d16;
+}
+
+[data-theme="dark"] {
+  --bg: #0f0f0e;
+  --surface: #1a1a18;
+  --ink: #eeede8;
+  --sub: #8a8a80;
+  --line: #2a2a26;
+  --accent-bg: #2d1216;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  transition: background .3s, color .3s;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 9999; opacity: 0.4;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+}
+
+/* ═══════════════════════════════════════════
+   SIDEBAR
+═══════════════════════════════════════════ */
+aside {
+  width: var(--sidebar-width);
+  height: 100vh;
+  position: fixed;
+  left: 0; top: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--line);
+  padding: 1.8rem 1.4rem 2rem;
+  display: flex;
+  flex-direction: column;
+  z-index: 200;
+  transition: background .3s, border-color .3s;
+  overflow-y: auto;
+}
+
+.sidebar-header { margin-bottom: 2.4rem; }
+
+.el-badge {
+  display: inline-flex; align-items: center; gap: .3rem;
+  background: var(--accent); color: #fff;
+  padding: .2rem .65rem;
+  border-radius: 6px; font-weight: 600;
+  font-size: 10.5px; letter-spacing: .05em;
+  text-transform: uppercase; margin-bottom: .6rem;
+}
+
+.sidebar-logo {
+  font-family: var(--font-serif);
+  font-size: 1.3rem;
+  color: var(--ink);
+  text-decoration: none;
+  display: block;
+  line-height: 1.2;
+  letter-spacing: -.01em;
+}
+
+.sidebar-logo em {
+  font-style: italic;
+  color: var(--sub);
+}
+
+.sidebar-divider {
+  height: 1px;
+  background: var(--line);
+  margin: 1.2rem 0;
+}
+
+.nav-group { margin-bottom: 1.6rem; }
+
+.nav-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  color: var(--sub);
+  font-weight: 600;
+  display: block;
+  margin-bottom: .6rem;
+  padding-left: .35rem;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: .65rem;
+  padding: .55rem .85rem;
+  color: var(--sub);
+  text-decoration: none;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 400;
+  margin-bottom: 2px;
+  transition: all .15s;
+  border: 1px solid transparent;
+}
+
+.nav-link:hover {
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.nav-link.active {
+  background: var(--accent-bg);
+  color: var(--accent);
+  font-weight: 600;
+  border-color: color-mix(in srgb, var(--accent) 20%, transparent);
+}
+
+.nav-link-num {
+  font-size: 10px;
+  font-weight: 600;
+  opacity: .45;
+  min-width: 16px;
+  font-family: var(--font-serif);
+  font-style: italic;
+}
+
+.nav-link.active .nav-link-num { opacity: .7; }
+
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--line);
+}
+
+.theme-toggle {
+  width: 100%;
+  display: flex; align-items: center; gap: .6rem;
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: .55rem .85rem;
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  color: var(--sub);
+  cursor: pointer;
+  transition: background .15s, border-color .15s, color .15s;
+}
+
+.theme-toggle:hover {
+  background: var(--bg);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.theme-toggle .t-icon { font-size: 14px; }
+
+/* ═══════════════════════════════════════════
+   MAIN
+═══════════════════════════════════════════ */
+main {
+  flex: 1;
+  margin-left: var(--sidebar-width);
+  max-width: calc(100% - var(--sidebar-width));
+}
+
+.top-bar {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(245,244,240,.88);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
+  padding: .8rem 2.5rem;
+  display: flex; align-items: center; justify-content: space-between;
+  transition: background .3s;
+}
+
+[data-theme="dark"] .top-bar {
+  background: rgba(15,15,14,.88);
+}
+
+.breadcrumb {
+  font-size: 12px; color: var(--sub);
+  display: flex; align-items: center; gap: .4rem;
+}
+.breadcrumb span { opacity: .5; }
+
+.topbar-badges {
+  display: flex; gap: .4rem;
+}
+
+.topbar-tag {
+  font-size: 10.5px; font-weight: 600;
+  letter-spacing: .07em; text-transform: uppercase;
+  padding: .22rem .65rem; border-radius: 6px;
+  background: var(--accent-bg);
+  color: var(--accent);
+  border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+}
+
+/* ═══════════════════════════════════════════
+   CONTENT BODY
+═══════════════════════════════════════════ */
+.content-body {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 4rem 2.5rem 8rem;
+}
+
+/* ═══════════════════════════════════════════
+   SECTION ANCHORS
+═══════════════════════════════════════════ */
+.section-anchor {
+  scroll-margin-top: 80px;
+  margin-bottom: 5rem;
+}
+
+/* ═══════════════════════════════════════════
+   HERO
+═══════════════════════════════════════════ */
+.hero-eyebrow {
+  font-size: 10.5px; font-weight: 600;
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: .55rem;
+  display: flex; align-items: center; gap: .5rem;
+}
+
+.hero-eyebrow::before {
+  content: '';
+  width: 18px; height: 2px;
+  background: var(--accent);
+  border-radius: 1px;
+}
+
+h1 {
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 4.5vw, 3.2rem);
+  line-height: 1.1;
+  letter-spacing: -.02em;
+  font-weight: 400;
+  margin: .7rem 0 1rem;
+}
+
+.hero-desc {
+  font-size: 1.05rem;
+  color: var(--sub);
+  font-weight: 300;
+  line-height: 1.65;
+  margin-bottom: 2.5rem;
+  max-width: 580px;
+}
+
+/* ═══════════════════════════════════════════
+   CARDS
+═══════════════════════════════════════════ */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: transform .2s cubic-bezier(.22,1,.36,1), box-shadow .2s, border-color .2s;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 36px rgba(0,0,0,.1);
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+}
+
+.card-stripe {
+  height: 4px;
+  background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 55%, transparent));
+}
+
+.card-body { padding: 1.35rem; }
+
+.card-body h3 {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  margin-bottom: .65rem;
+  color: var(--ink);
+  display: flex; align-items: center; gap: .5rem;
+}
+
+.card-body h3::before {
+  content: '';
+  width: 5px; height: 5px;
+  background: var(--accent);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.card-body p {
+  font-size: 13.5px;
+  color: var(--sub);
+  line-height: 1.6;
+  font-weight: 300;
+}
+
+.card-body strong { color: var(--ink); font-weight: 600; }
+
+/* ═══════════════════════════════════════════
+   PROBLÉMATIQUE BOX
+═══════════════════════════════════════════ */
+.prob-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin: 2.5rem 0;
+}
+
+.prob-box {
+  background: var(--accent-bg);
+  border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+  border-left: 4px solid var(--accent);
+  padding: 1.8rem 2rem;
+  border-radius: var(--radius);
+}
+
+.prob-box .prob-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  color: var(--accent);
+  margin-bottom: .6rem;
+  display: block;
+}
+
+.prob-box p {
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  color: var(--accent-dark);
+  font-style: italic;
+  line-height: 1.4;
+}
+
+[data-theme="dark"] .prob-box p { color: var(--accent); }
+
+/* ═══════════════════════════════════════════
+   MOUVEMENT SECTIONS
+═══════════════════════════════════════════ */
+.mv-item { margin-bottom: 4rem; }
+
+.mv-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.2rem;
+  margin-bottom: 1.8rem;
+  padding-bottom: 1.2rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.mv-num {
+  width: 44px; height: 44px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-serif);
+  font-size: 1.3rem;
+  font-style: italic;
+  flex-shrink: 0;
+}
+
+.mv-title-group h2 {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: -.01em;
+  margin-bottom: .3rem;
+}
+
+.mv-lines {
+  font-size: 11.5px;
+  color: var(--sub);
+  font-style: italic;
+  font-weight: 300;
+}
+
+/* ═══════════════════════════════════════════
+   BULLET STACK
+═══════════════════════════════════════════ */
+.bullet-stack {
+  display: flex;
+  flex-direction: column;
+  gap: .6rem;
+}
+
+.bullet {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 1.15rem 1.3rem;
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 1rem;
+  align-items: start;
+  transition: border-color .15s, background .15s;
+}
+
+.bullet:hover {
+  border-color: color-mix(in srgb, var(--accent) 35%, transparent);
+  background: color-mix(in srgb, var(--accent-bg) 40%, var(--surface));
+}
+
+.bullet b {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: .03em;
+  padding-top: .05rem;
+}
+
+.bullet span {
+  font-size: 13.5px;
+  color: var(--sub);
+  line-height: 1.6;
+  font-weight: 300;
+}
+
+.quote {
+  font-style: italic;
+  color: var(--accent-dark);
+  background: var(--accent-bg);
+  padding: .05rem .35rem;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+[data-theme="dark"] .quote {
+  color: var(--accent);
+}
+
+/* ═══════════════════════════════════════════
+   SECTION HEADING
+═══════════════════════════════════════════ */
+.section-heading {
+  font-family: var(--font-serif);
+  font-size: 1.9rem;
+  font-weight: 400;
+  letter-spacing: -.015em;
+  margin-bottom: 1.5rem;
+  display: flex; align-items: center; gap: .7rem;
+}
+
+.section-heading::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+
+/* ═══════════════════════════════════════════
+   CONCLUSION CARD SPECIAL
+═══════════════════════════════════════════ */
+.concl-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: transform .2s cubic-bezier(.22,1,.36,1), box-shadow .2s, border-color .2s;
+}
+.concl-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 36px rgba(0,0,0,.1);
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+}
+.concl-card-head {
+  padding: .6rem 1.2rem;
+  background: var(--accent-bg);
+  border-bottom: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+  font-size: 10.5px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .1em;
+  color: var(--accent);
+}
+.concl-card-body {
+  padding: 1.25rem 1.35rem;
+  font-size: 13.5px;
+  color: var(--sub);
+  line-height: 1.6;
+  font-weight: 300;
+}
+.concl-card-body em { font-style: italic; color: var(--ink); }
+
+/* ═══════════════════════════════════════════
+   MOBILE
+═══════════════════════════════════════════ */
+@media (max-width: 768px) {
+  aside { transform: translateX(-100%); transition: transform .3s; }
+  aside.open { transform: translateX(0); }
+  main { margin-left: 0; max-width: 100%; }
+  .top-bar { padding: .8rem 1.2rem; }
+  .content-body { padding: 2.5rem 1.2rem 6rem; }
+  .bullet { grid-template-columns: 1fr; gap: .3rem; }
+  .mob-menu-btn { display: flex !important; }
+}
+
+.mob-menu-btn {
+  display: none;
+  width: 34px; height: 34px;
+  align-items: center; justify-content: center;
+  background: none; border: 1px solid var(--line);
+  border-radius: 9px; cursor: pointer;
+  font-size: 16px; color: var(--ink);
+}
+
+/* Progress indicator */
+.progress-bar {
+  position: fixed;
+  top: 0; left: 0;
+  height: 3px;
+  background: var(--accent);
+  z-index: 9997;
+  transition: width .1s;
+  border-radius: 0 2px 2px 0;
+}
+
+/* Animations */
+.card, .bullet, .prob-box, .mv-item {
+  animation: fade-up .4s cubic-bezier(.22,1,.36,1) both;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+.back-btn {
+  display: inline-flex; align-items: center; gap: .35rem;
+  text-decoration: none; color: var(--accent); font-size: 12.5px;
+  font-weight: 500; white-space: nowrap;
+  padding: .25rem .55rem; border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+  transition: background .15s;
+}
+.back-btn:hover { background: var(--accent-bg); }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<aside id="sidebar">
+  <div class="sidebar-header">
+    <div class="el-badge">📖 EL 9</div>
+    <a href="#intro" class="sidebar-logo">Tyrannie et <em>servitude</em></a>
+    <div style="margin-top:.45rem;font-size:11.5px;color:var(--sub);font-weight:300">Étienne de La Boétie · 1548</div>
+  </div>
+
+  <div class="sidebar-divider"></div>
+
+  <nav>
+    <div class="nav-group">
+      <span class="nav-label">Mise en place</span>
+      <a href="#intro" class="nav-link active"><span class="nav-link-num">01</span> Introduction</a>
+      <a href="#prob" class="nav-link"><span class="nav-link-num">02</span> Problématiques</a>
+    </div>
+
+    <div class="nav-group">
+      <span class="nav-label">Analyse linéaire</span>
+      <a href="#mv1" class="nav-link"><span class="nav-link-num">I</span> Dénonciation du peuple</a>
+      <a href="#mv2" class="nav-link"><span class="nav-link-num">II</span> Critique du tyran</a>
+      <a href="#mv3" class="nav-link"><span class="nav-link-num">III</span> Accusation de complicité</a>
+    </div>
+
+    <div class="nav-group">
+      <span class="nav-label">Bilan</span>
+      <a href="#conclusion" class="nav-link"><span class="nav-link-num">03</span> Conclusion</a>
+    </div>
+  </nav>
+
+  <div class="sidebar-footer">
+    <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">
+      <span class="t-icon">🌙</span>
+      <span id="themeLabel">Mode sombre</span>
+    </button>
+  </div>
+</aside>
+
+<main>
+  <header class="top-bar">
+    <div style="display:flex;align-items:center;gap:.8rem">
+      <button class="mob-menu-btn" onclick="toggleSidebar()">☰</button>
+      <a href="index.html" class="back-btn">← Bibliothèque</a>
+      <div class="breadcrumb">
+        Français <span>›</span> <span style="color:var(--ink);font-weight:500">La Boétie · EL 9</span>
+      </div>
+    </div>
+    <div class="topbar-badges">
+      <span class="topbar-tag">La Boétie</span>
+      <span class="topbar-tag">1548</span>
+      <span class="topbar-tag">Humanisme</span>
+    </div>
+  </header>
+
+  <div class="content-body">
+
+    <section id="intro" class="section-anchor">
+      <div class="hero-eyebrow">Explication linéaire · Français</div>
+      <h1>Discours de la<br>servitude volontaire <em style="font-style:italic;color:var(--sub)">· Extrait</em></h1>
+      <p class="hero-desc">Une réflexion politique et philosophique majeure sur la nature du pouvoir tyrannique et la responsabilité des peuples dans leur propre asservissement[cite: 143].</p>
+
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-stripe"></div>
+          <div class="card-body">
+            <h3>L'auteur & l'œuvre</h3>
+            <p>Écrit en 1548 par un jeune humaniste de seulement 18 ans, conseiller au Parlement de Bordeaux et grand ami de Montaigne[cite: 141, 143].</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-stripe"></div>
+          <div class="card-body">
+            <h3>Le parcours</h3>
+            <p>S'inscrit dans l'axe <strong>« Défendre et entretenir la liberté »</strong> du baccalauréat[cite: 142].</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-stripe"></div>
+          <div class="card-body">
+            <h3>Situation</h3>
+            <p>Situé à la fin de la première partie, faisant suite au constat paradoxal de la servitude volontaire pour laisser éclater une indignation exhortant à l'action[cite: 145, 146].</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="prob" class="section-anchor">
+      <div class="section-heading">Problématiques proposées</div>
+      <div class="prob-container">
+        <div class="prob-box">
+          <span class="prob-label">Option 1 (Stratégie)</span>
+          <p>Quelle stratégie argumentative La Boétie emploie-t-il pour inciter le peuple à s’émanciper du joug du tyran[cite: 148]?</p>
+        </div>
+        <div class="prob-box">
+          <span class="prob-label">Option 2 (Paradoxe & Résistance)</span>
+          <p>Comment La Boétie critique-t-il le pouvoir tyrannique pour révéler la nature paradoxale de la servitude volontaire et inciter à la résistance passive[cite: 149]?</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="mv1" class="section-anchor">
+      <div class="mv-item">
+        <div class="mv-header">
+          <div class="mv-num">I</div>
+          <div class="mv-title-group">
+            <h2>Dénonciation de la soumission du peuple</h2>
+            <span class="mv-lines">Portrait critique et mise en relief de l'attitude paradoxale [cite: 154, 161]</span>
+          </div>
+        </div>
+
+        <div class="bullet-stack">
+          <div class="bullet">
+            <b>Apostrophe violente</b>
+            <span><span class="quote">« Pauvres et misérables peuples insensés »</span> : Interpellation énergique portée par des adjectifs péjoratifs qui soulignent l'absence de sens commun, l'entêtement (<span class="quote">« opiniâtres »</span>) et la perte de sens critique (<span class="quote">« aveugles »</span>)[cite: 155, 156, 158, 159].</span>
+          </div>
+          <div class="bullet">
+            <b>Passivité coupable</b>
+            <span>L'emploi du verbe pronominal passif + infinitif <span class="quote">« vous vous laissez enlever »</span> conjugué à la 2ème personne du pluriel désigne directement le peuple comme sujet responsable de son propre asservissement[cite: 163, 164].</span>
+          </div>
+          <div class="bullet">
+            <b>Gradation du vol</b>
+            <span>Accumulation de verbes d'action négatifs (<span class="quote">« enlever, piller, voler, dépouiller »</span>) révélant l'ampleur de la déraison collective face aux méfaits du tyran[cite: 165, 166].</span>
+          </div>
+          <div class="bullet">
+            <b>Dépossession totale</b>
+            <span>Le double superlatif et l'hyperbole <span class="quote">« le plus beau et le plus clair »</span> alliés à la métaphore des <span class="quote">« simples locataires »</span> montrent une perte totale de souveraineté matérielle et morale (jusqu'à leurs propres vies)[cite: 167, 168, 169].</span>
+          </div>
+          <div class="bullet">
+            <b>Ironie et refus de plainte</b>
+            <span>Avec la négation totale <span class="quote">« vous ne pouvez pas »</span> (se vanter) et l'emploi du conditionnel <span class="quote">« vous seriez contents »</span>, l'auteur use d'ironie pour condamner une complicité passive[cite: 170, 171].</span>
+          </div>
+          <div class="bullet">
+            <b>Le paradoxe du nombre</b>
+            <span>Gradation négative (<span class="quote">« ce dégât, ce malheur, cette ruine » »</span>) et opposition entre le pluriel <span class="quote">« des ennemis »</span> et le singulier <span class="quote">« de l'ennemi »</span> : l'absurdité qu'un seul homme cause d'infinis supplices[cite: 172, 173].</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="mv2" class="section-anchor">
+      <div class="mv-item">
+        <div class="mv-header">
+          <div class="mv-num">II</div>
+          <div class="mv-title-group">
+            <h2>La critique du pouvoir tyrannique & classification des régimes</h2>
+            <span class="mv-lines">Désacralisation du maître et typologie de la tyrannie [cite: 152, 181, 203]</span>
+          </div>
+        </div>
+
+        <div class="bullet-stack">
+          <div class="bullet">
+            <b>Désacralisation physique</b>
+            <span>Emploi de trois négations restrictives : <span class="quote">« n’a que deux yeux, n’a que deux mains, n’a qu’un corps »</span>. Le tyran est rabaissé à sa condition d'humain mortel et faible, mis au même niveau que le moindre de ses sujets[cite: 181, 182].</span>
+          </div>
+          <div class="bullet">
+            <b>Antithèse destructrice</b>
+            <span>L'antithèse entre les verbes <span class="quote">« faire »</span> et <span class="quote">« détruire »</span> (<span class="quote">« celui que vous lui faites pour vous détruire »</span>) met en lumière le fait que le peuple fabrique lui-même la force supérieure factice qui l'écrase[cite: 183, 184, 186].</span>
+          </div>
+          <div class="bullet">
+            <b>Classification (I)</b>
+            <span>Ouverture didactique et impersonnelle : <span class="quote">« Il y a trois sortes de tyrans »</span>. La Boétie adopte une posture de juriste ou de professeur pour universaliser sa thèse[cite: 203, 204].</span>
+          </div>
+          <div class="bullet">
+            <b>Rythme ternaire des régimes</b>
+            <span>Parallélisme de construction (<span class="quote">« les uns [...], les autres »</span>) s'appuyant sur des groupes nominaux expansés pour poser les trois modes d'accès au pouvoir : le choix (élection), la violence (force des armes) et le sang (succession de lignée)[cite: 206, 207, 208, 210].</span>
+          </div>
+          <div class="bullet">
+            <b>Le tyran conquérant et né</b>
+            <span>L'antithèse <span class="quote">« droit de la guerre »</span> montre l'absurdité de légitimer le pouvoir par la force. La litote et l'euphémisme (<span class="quote">« en pays conquis »</span>) s'appliquent également au tyran héréditaire, qui traite ses sujets comme des <span class="quote">« serfs héréditaires »</span> (du latin <em>servus</em>, esclave) par le biais d'une métaphore filée de l'allaitement (<span class="quote">« tirent avec le lait »</span>)[cite: 214, 215, 216, 217, 221, 228, 229, 232, 234].</span>
+          </div>
+          <div class="bullet">
+            <b>Le paradoxe de l'élu</b>
+            <span>Cas du tyran choisi par le peuple : l'emploi du conditionnel présent (<span class="quote">« devrait être »</span>) souligne la déception[cite: 238, 239, 240]. L'antiphrase ironique <span class="quote">« ce je ne sais quoi qu'on appelle la grandeur »</span> dénonce la corruption rapide par l'orgueil[cite: 241, 242]. Un chiasme souligne le glissement de l'élection vers l'appropriation : <span class="quote">« transmettre à ses enfants ce que le peuple lui a accordé »</span>[cite: 250, 251].</span>
+          </div>
+          <div class="bullet">
+            <b>Le sommet du vice</b>
+            <span>Mise en valeur par négation restrictive (<span class="quote">« ne voyant d’autres moyens [...] que d’embrasser si fort la servitude »</span>) : le tyran élu devient paradoxalement le pire, car il supprime toute liberté pour sécuriser son pouvoir personnel[cite: 254, 256, 257, 258].</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="mv3" class="section-anchor">
+      <div class="mv-item">
+        <div class="mv-header">
+          <div class="mv-num">III</div>
+          <div class="mv-title-group">
+            <h2>Accusation de complicité du peuple & Conclusions</h2>
+            <span class="mv-lines">Le piège de la co-responsabilité et le réquisitoire final [cite: 187, 259]</span>
+          </div>
+        </div>
+
+        <div class="bullet-stack">
+          <div class="bullet">
+            <b>Questions rhétoriques</b>
+            <span>Accumulation de propositions interrogatives directes et partielles servant de leviers rhétoriques pour forcer la prise de conscience du lecteur[cite: 188].</span>
+          </div>
+          <div class="bullet">
+            <b>Pouvoir conditionnel</b>
+            <span>La structure répétitive (principale + subordonnée conjonctive de condition introduite par <span class="quote">« si »</span>) démontre de manière implacable que la puissance du tyran est entièrement suspendue au consentement du peuple[cite: 189].</span>
+          </div>
+          <div class="bullet">
+            <b>Verbes antithétiques</b>
+            <span>Le jeu alterné des pronoms (<span class="quote">« vous / lui »</span>) associé à des verbes opposés (<span class="quote">« prendre / donner »</span>) matérialise visuellement la complicité involontaire de la masse dans sa propre oppression[cite: 192, 193].</span>
+          </div>
+          <div class="bullet">
+            <b>Métaphores juridiques</b>
+            <span>Gradation forte dans les figures de substitution : le peuple est qualifié de <span class="quote">« receleurs du larron »</span> (le tyran voleur) puis de <span class="quote">« complices du meurtrier »</span> (le tyran assassin), pour finir <span class="quote">« traîtres à vous-mêmes »</span>[cite: 196, 197, 198].</span>
+          </div>
+          <div class="bullet">
+            <b>Animaux à dompter</b>
+            <span>L'adverbe de liaison <span class="quote">« ainsi »</span> et le modalisateur personnel <span class="quote">« je vois bien »</span> introduisent le jugement final[cite: 260, 261]. Les comparaisons animales (<span class="quote">« comme s’ils avaient pris des taureaux à dompter »</span>, <span class="quote">« comme leur proie »</span>) illustrent la déshumanisation et la réification des sujets opérés par le pouvoir[cite: 266, 267, 268].</span>
+          </div>
+          <div class="bullet">
+            <b>Oxymore de clôture</b>
+            <span>L'expression <span class="quote">« leurs naturels esclaves »</span> fonctionne comme un oxymore dénonçant la naturalisation abusive de l'exploitation humaine[cite: 270].</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="conclusion" class="section-anchor">
+      <h2 class="section-heading">Bilan de l'étude</h2>
+
+      <div class="card-grid">
+        <div class="concl-card">
+          <div class="concl-card-head">Synthèse</div>
+          <div class="concl-card-body">Une déconstruction philosophique implacable. Peu importe son origine (élection, force ou sang), le tyran partage une même nature oppressive qui abuse du pouvoir et détruit la liberté[cite: 272, 273]. La tyrannie est injustifiable, elle repose sur un simple choix : le refus d'obéir[cite: 274].</div>
+        </div>
+        <div class="concl-card">
+          <div class="concl-card-head">Ouverture Culturelle 1</div>
+          <div class="concl-card-body">Le film <em>Le Dictateur</em> de Charlie Chaplin, caricaturant un tyran guidé par la folie, la vanité et le ridicule, illustrant à merveille la fragilité intrinsèque de ce pouvoir absolu s'il cesse d'être pris au sérieux[cite: 275].</div>
+        </div>
+        <div class="concl-card">
+          <div class="concl-card-head">Ouverture Culturelle 2</div>
+          <div class="concl-card-body">Le concept du <em>Léviathan</em> de Thomas Hobbes, ce colosse étatique constitué par l'agrégation de tous les corps des citoyens, proposant une autre réflexion sur la dynamique de la soumission et du pouvoir concentré[cite: 276].</div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<script>
+// ── THEME SWITCHER ──
+function toggleTheme() {
+  const html = document.documentElement;
+  const dark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', dark ? 'light' : 'dark');
+  document.getElementById('themeBtn').querySelector('.t-icon').textContent = dark ? '🌙' : '☀️';
+  document.getElementById('themeLabel').textContent = dark ? 'Mode sombre' : 'Mode clair';
+  localStorage.setItem('lb_theme', dark ? 'light' : 'dark');
+}
+
+const savedTheme = localStorage.getItem('lb_theme');
+if (savedTheme) {
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  if (savedTheme === 'dark') {
+    document.querySelector('.t-icon').textContent = '☀️';
+    document.getElementById('themeLabel').textContent = 'Mode clair';
+  }
+}
+
+// ── MOBILE SIDEBAR ──
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+// ── SCROLL & PROGRESS INDICATOR ──
+const sections = document.querySelectorAll('.section-anchor');
+const navLinks = document.querySelectorAll('.nav-link');
+
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    if (pageYOffset >= s.offsetTop - 140) current = s.getAttribute('id');
+  });
+  navLinks.forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === '#' + current) link.classList.add('active');
+  });
+
+  // Barre de progression
+  const scrolled = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+  document.getElementById('progressBar').style.width = Math.min(scrolled, 100) + '%';
+}, { passive: true });
+</script>
+</body>
+</html>

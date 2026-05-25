@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>On ne badine pas avec l'amour · EL · Scène d'exposition</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+:root {
+  --bg: #f5f4f0;
+  --surface: #ffffff;
+  --ink: #111110;
+  --sub: #7a7a74;
+  --line: #e2e1db;
+  --radius: 14px;
+  --sidebar-width: 272px;
+  --font-serif: 'DM Serif Display', Georgia, serif;
+  --font-sans: 'DM Sans', system-ui, sans-serif;
+
+  --accent: #2050c0;
+  --accent-bg: #e8eefa;
+  --accent-dark: #082060;
+}
+
+[data-theme="dark"] {
+  --bg: #0f0f0e;
+  --surface: #1a1a18;
+  --ink: #eeede8;
+  --sub: #8a8a80;
+  --line: #2a2a26;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg); color: var(--ink);
+  min-height: 100vh; font-size: 15px; line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  display: flex; transition: background .3s, color .3s; overflow-x: hidden;
+}
+
+body::before {
+  content: ''; position: fixed; inset: 0;
+  pointer-events: none; z-index: 9999; opacity: 0.4;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+}
+
+/* ═══ SIDEBAR ═══ */
+aside {
+  width: var(--sidebar-width); height: 100vh;
+  position: fixed; left: 0; top: 0;
+  background: var(--surface); border-right: 1px solid var(--line);
+  padding: 1.8rem 1.4rem 2rem;
+  display: flex; flex-direction: column;
+  z-index: 200; transition: background .3s, border-color .3s, transform .3s;
+  overflow-y: auto;
+}
+
+.sidebar-header { margin-bottom: 2.4rem; }
+
+.el-badge {
+  display: inline-flex; align-items: center; gap: .3rem;
+  background: var(--accent); color: #fff;
+  padding: .2rem .65rem; border-radius: 6px;
+  font-weight: 600; font-size: 10.5px;
+  letter-spacing: .05em; text-transform: uppercase; margin-bottom: .6rem;
+}
+
+.sidebar-logo {
+  font-family: var(--font-serif); font-size: 1.15rem;
+  color: var(--ink); text-decoration: none;
+  display: block; line-height: 1.25; letter-spacing: -.01em;
+}
+.sidebar-logo em { font-style: italic; color: var(--sub); }
+
+.sidebar-divider { height: 1px; background: var(--line); margin: 1.2rem 0; }
+
+.nav-group { margin-bottom: 1.6rem; }
+
+.nav-label {
+  font-size: 10px; text-transform: uppercase;
+  letter-spacing: .14em; color: var(--sub);
+  font-weight: 600; display: block;
+  margin-bottom: .6rem; padding-left: .35rem;
+}
+
+.nav-link {
+  display: flex; align-items: center; gap: .65rem;
+  padding: .55rem .85rem; color: var(--sub);
+  text-decoration: none; border-radius: 10px;
+  font-size: 13px; font-weight: 400;
+  margin-bottom: 2px; transition: all .15s;
+  border: 1px solid transparent;
+}
+.nav-link:hover { background: var(--bg); color: var(--ink); }
+.nav-link.active {
+  background: var(--accent-bg); color: var(--accent);
+  font-weight: 600;
+  border-color: color-mix(in srgb, var(--accent) 20%, transparent);
+}
+.nav-link-num {
+  font-size: 10px; font-weight: 600; opacity: .45;
+  min-width: 16px; font-family: var(--font-serif); font-style: italic;
+}
+.nav-link.active .nav-link-num { opacity: .7; }
+
+.sidebar-footer {
+  margin-top: auto; padding-top: 1.2rem;
+  border-top: 1px solid var(--line);
+}
+
+.theme-toggle {
+  width: 100%; display: flex; align-items: center; gap: .6rem;
+  background: none; border: 1px solid var(--line);
+  border-radius: 10px; padding: .55rem .85rem;
+  font-family: var(--font-sans); font-size: 12.5px;
+  color: var(--sub); cursor: pointer;
+  transition: background .15s, border-color .15s, color .15s;
+}
+.theme-toggle:hover { background: var(--bg); border-color: var(--accent); color: var(--accent); }
+
+/* ═══ MAIN ═══ */
+main { flex: 1; margin-left: var(--sidebar-width); max-width: calc(100% - var(--sidebar-width)); }
+
+.top-bar {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(245,244,240,.88);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
+  padding: .8rem 2.5rem;
+  display: flex; align-items: center; justify-content: space-between;
+  transition: background .3s;
+}
+[data-theme="dark"] .top-bar { background: rgba(15,15,14,.88); }
+
+.breadcrumb { font-size: 12px; color: var(--sub); display: flex; align-items: center; gap: .4rem; }
+.breadcrumb span { opacity: .5; }
+
+.topbar-badges { display: flex; gap: .4rem; }
+.topbar-tag {
+  font-size: 10.5px; font-weight: 600;
+  letter-spacing: .07em; text-transform: uppercase;
+  padding: .22rem .65rem; border-radius: 6px;
+  background: var(--accent-bg); color: var(--accent);
+  border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+}
+
+.mob-menu-btn {
+  display: none; width: 34px; height: 34px;
+  align-items: center; justify-content: center;
+  background: none; border: 1px solid var(--line);
+  border-radius: 9px; cursor: pointer; font-size: 16px; color: var(--ink);
+}
+
+/* ═══ CONTENT ═══ */
+.content-body { max-width: 820px; margin: 0 auto; padding: 4rem 2.5rem 8rem; }
+.section-anchor { scroll-margin-top: 80px; margin-bottom: 5rem; }
+
+/* ═══ HERO ═══ */
+.hero-eyebrow {
+  font-size: 10.5px; font-weight: 600;
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: .55rem;
+  display: flex; align-items: center; gap: .5rem;
+}
+.hero-eyebrow::before {
+  content: ''; width: 18px; height: 2px;
+  background: var(--accent); border-radius: 1px;
+}
+
+h1 {
+  font-family: var(--font-serif);
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  line-height: 1.1; letter-spacing: -.02em;
+  font-weight: 400; margin: .7rem 0 1rem;
+}
+
+.hero-desc {
+  font-size: 1.05rem; color: var(--sub);
+  font-weight: 300; line-height: 1.65;
+  margin-bottom: 2.5rem; max-width: 580px;
+}
+
+/* ═══ CARDS ═══ */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem; margin-bottom: 1rem;
+}
+
+.card {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--radius); overflow: hidden;
+  transition: transform .2s cubic-bezier(.22,1,.36,1), box-shadow .2s, border-color .2s;
+  animation: fade-up .4s cubic-bezier(.22,1,.36,1) both;
+}
+.card:hover {
+  transform: translateY(-3px); box-shadow: 0 12px 36px rgba(0,0,0,.1);
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+}
+.card-stripe { height: 4px; background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 55%, transparent)); }
+.card-body { padding: 1.35rem; }
+.card-body h3 {
+  font-family: var(--font-serif); font-size: 1.05rem;
+  margin-bottom: .65rem; color: var(--ink);
+  display: flex; align-items: center; gap: .5rem;
+}
+.card-body h3::before {
+  content: ''; width: 5px; height: 5px;
+  background: var(--accent); border-radius: 50%; flex-shrink: 0;
+}
+.card-body p { font-size: 13.5px; color: var(--sub); line-height: 1.6; font-weight: 300; }
+.card-body strong { color: var(--ink); font-weight: 600; }
+
+/* ═══ SITUATION BOX ═══ */
+.situation-box {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--radius); overflow: hidden; margin-bottom: 2rem;
+}
+.situation-box-head {
+  padding: .6rem 1.3rem;
+  background: color-mix(in srgb, var(--accent-bg) 60%, var(--surface));
+  border-bottom: 1px solid var(--line);
+  font-size: 10px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .14em; color: var(--accent);
+  display: flex; align-items: center; gap: .45rem;
+}
+.situation-box-body {
+  padding: 1.2rem 1.35rem;
+  font-size: 13.5px; color: var(--sub);
+  line-height: 1.7; font-weight: 300;
+}
+.situation-box-body strong { color: var(--ink); font-weight: 600; }
+
+/* ═══ PROBLEMATIQUE ═══ */
+.prob-box {
+  background: var(--accent-bg);
+  border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+  border-left: 4px solid var(--accent);
+  padding: 2rem 2.2rem; border-radius: var(--radius);
+  margin: 2.5rem 0;
+  animation: fade-up .4s cubic-bezier(.22,1,.36,1) both;
+}
+.prob-box .prob-label {
+  font-size: 10px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .14em;
+  color: var(--accent); margin-bottom: .7rem; display: block;
+}
+.prob-box p {
+  font-family: var(--font-serif); font-size: 1.45rem;
+  color: var(--accent-dark); font-style: italic; line-height: 1.4;
+}
+[data-theme="dark"] .prob-box p { color: var(--accent); }
+
+/* ═══ MOUVEMENTS ═══ */
+.mv-item { margin-bottom: 4rem; animation: fade-up .4s cubic-bezier(.22,1,.36,1) both; }
+
+.mv-header {
+  display: flex; align-items: flex-start; gap: 1.2rem;
+  margin-bottom: 1.8rem; padding-bottom: 1.2rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.mv-num {
+  width: 44px; height: 44px; background: var(--accent); color: #fff;
+  border-radius: 12px; display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-serif); font-size: 1.3rem;
+  font-style: italic; flex-shrink: 0;
+}
+
+.mv-title-group h2 {
+  font-family: var(--font-serif); font-size: 1.5rem;
+  font-weight: 400; line-height: 1.2;
+  letter-spacing: -.01em; margin-bottom: .3rem;
+}
+.mv-lines { font-size: 11.5px; color: var(--sub); font-style: italic; font-weight: 300; }
+
+/* ═══ BULLETS ═══ */
+.bullet-stack { display: flex; flex-direction: column; gap: .6rem; }
+
+.bullet {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: 12px; padding: 1.15rem 1.3rem;
+  display: grid; grid-template-columns: 160px 1fr;
+  gap: 1rem; align-items: start;
+  transition: border-color .15s, background .15s;
+}
+.bullet:hover {
+  border-color: color-mix(in srgb, var(--accent) 35%, transparent);
+  background: color-mix(in srgb, var(--accent-bg) 40%, var(--surface));
+}
+.bullet b {
+  font-size: 12px; font-weight: 600;
+  color: var(--accent); letter-spacing: .03em; padding-top: .05rem;
+}
+.bullet span {
+  font-size: 13.5px; color: var(--sub);
+  line-height: 1.6; font-weight: 300;
+}
+
+.quote {
+  font-style: italic; color: var(--accent-dark);
+  background: var(--accent-bg);
+  padding: .05rem .35rem; border-radius: 4px; font-size: 13px;
+}
+[data-theme="dark"] .quote { color: var(--accent); }
+
+/* ═══ ALERTE TRAGIQUE ═══ */
+.tragic-note {
+  margin-top: 1rem;
+  background: color-mix(in srgb, var(--accent-bg) 50%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+  border-left: 3px solid var(--accent);
+  border-radius: 10px; padding: .9rem 1.2rem;
+  display: flex; gap: .7rem; align-items: flex-start;
+}
+.tragic-note-icon { font-size: 14px; flex-shrink: 0; margin-top: .1rem; }
+.tragic-note-text { font-size: 13px; color: var(--sub); line-height: 1.6; font-weight: 300; }
+.tragic-note-text strong { color: var(--accent); font-weight: 600; }
+
+/* ═══ SECTION HEADING ═══ */
+.section-heading {
+  font-family: var(--font-serif); font-size: 1.9rem;
+  font-weight: 400; letter-spacing: -.015em; margin-bottom: 1.5rem;
+  display: flex; align-items: center; gap: .7rem;
+}
+.section-heading::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+
+/* ═══ CONCLUSION CARDS ═══ */
+.concl-card {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--radius); overflow: hidden;
+  transition: transform .2s cubic-bezier(.22,1,.36,1), box-shadow .2s, border-color .2s;
+}
+.concl-card:hover {
+  transform: translateY(-3px); box-shadow: 0 12px 36px rgba(0,0,0,.1);
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+}
+.concl-card-head {
+  padding: .6rem 1.2rem; background: var(--accent-bg);
+  border-bottom: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+  font-size: 10.5px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .1em; color: var(--accent);
+}
+.concl-card-body {
+  padding: 1.25rem 1.35rem; font-size: 13.5px;
+  color: var(--sub); line-height: 1.6; font-weight: 300;
+}
+.concl-card-body em { font-style: italic; color: var(--ink); }
+
+/* ═══ PROGRESS BAR ═══ */
+.progress-bar {
+  position: fixed; top: 0; left: 0; height: 3px;
+  background: var(--accent); z-index: 9997;
+  transition: width .1s; border-radius: 0 2px 2px 0;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ═══ MOBILE ═══ */
+@media (max-width: 768px) {
+  aside { transform: translateX(-100%); }
+  aside.open { transform: translateX(0); }
+  main { margin-left: 0; max-width: 100%; }
+  .top-bar { padding: .8rem 1.2rem; }
+  .content-body { padding: 2.5rem 1.2rem 6rem; }
+  .bullet { grid-template-columns: 1fr; gap: .3rem; }
+  .mob-menu-btn { display: flex !important; }
+  .topbar-badges { display: none; }
+}
+.back-btn {
+  display: inline-flex; align-items: center; gap: .35rem;
+  text-decoration: none; color: var(--accent); font-size: 12.5px;
+  font-weight: 500; white-space: nowrap;
+  padding: .25rem .55rem; border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+  transition: background .15s;
+}
+.back-btn:hover { background: var(--accent-bg); }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- ═══════ SIDEBAR ═══════ -->
+<aside id="sidebar">
+  <div class="sidebar-header">
+    <div class="el-badge">📖 EL · Acte I, sc. 1</div>
+    <a href="#intro" class="sidebar-logo"><em>On ne badine pas</em><br>avec l'amour</a>
+    <div style="margin-top:.45rem;font-size:11.5px;color:var(--sub);font-weight:300">Alfred de Musset · 1834</div>
+  </div>
+
+  <div class="sidebar-divider"></div>
+
+  <nav>
+    <div class="nav-group">
+      <span class="nav-label">Mise en place</span>
+      <a href="#intro" class="nav-link active"><span class="nav-link-num">01</span> Introduction</a>
+      <a href="#situation" class="nav-link"><span class="nav-link-num">02</span> Situation du texte</a>
+      <a href="#prob" class="nav-link"><span class="nav-link-num">03</span> Problématique</a>
+    </div>
+
+    <div class="nav-group">
+      <span class="nav-label">Analyse linéaire</span>
+      <a href="#mv1" class="nav-link"><span class="nav-link-num">I</span> Portrait de Blazius</a>
+      <a href="#mv2" class="nav-link"><span class="nav-link-num">II</span> Éloge de Perdican</a>
+      <a href="#mv3" class="nav-link"><span class="nav-link-num">III</span> Retour au grotesque</a>
+    </div>
+
+    <div class="nav-group">
+      <span class="nav-label">Bilan</span>
+      <a href="#conclusion" class="nav-link"><span class="nav-link-num">04</span> Conclusion</a>
+    </div>
+  </nav>
+
+  <div class="sidebar-footer">
+    <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">
+      <span class="t-icon">🌙</span>
+      <span id="themeLabel">Mode sombre</span>
+    </button>
+  </div>
+</aside>
+
+<!-- ═══════ MAIN ═══════ -->
+<main>
+  <header class="top-bar">
+    <div style="display:flex;align-items:center;gap:.8rem">
+      <button class="mob-menu-btn" onclick="toggleSidebar()">☰</button>
+      <a href="index.html" class="back-btn">← Bibliothèque</a>
+      <div class="breadcrumb">
+        Français <span>›</span> Musset <span>›</span> <span style="color:var(--ink);font-weight:500">Scène d'exposition</span>
+      </div>
+    </div>
+    <div class="topbar-badges">
+      <span class="topbar-tag">Musset</span>
+      <span class="topbar-tag">1834</span>
+      <span class="topbar-tag">Romantisme</span>
+    </div>
+  </header>
+
+  <div class="content-body">
+
+    <!-- ── INTRO ── -->
+    <section id="intro" class="section-anchor">
+      <div class="hero-eyebrow">Explication linéaire · Français</div>
+      <h1>Scène d'exposition<br><em style="font-style:italic;color:var(--sub)">Acte I, scène 1</em></h1>
+      <p class="hero-desc">Une ouverture de pièce qui joue la farce tout en semant les graines du drame : portraits grotesques, éloge romantique et indices d'une tragédie annoncée.</p>
+
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-stripe"></div>
+          <div class="card-body">
+            <h3>L'auteur & le mouvement</h3>
+            <p>Alfred de Musset, auteur majeur du <strong>Romantisme</strong>. La pièce appartient au genre du <strong>Proverbe</strong>, d'abord écrite pour être lue (<em>Spectacle dans un fauteuil</em>) avant d'être jouée.</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-stripe"></div>
+          <div class="card-body">
+            <h3>L'œuvre</h3>
+            <p>Un <strong>drame romantique</strong> mêlant comédie et tragédie. Le titre lui-même est un proverbe — avertissement ironique qui plane sur toute la pièce.</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-stripe"></div>
+          <div class="card-body">
+            <h3>Le Chœur</h3>
+            <p>Instance narrative et comique originale : le Chœur commente l'action avec une <strong>ironie distanciée</strong>, héritée de l'Antiquité mais détournée à des fins satiriques.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SITUATION ── -->
+    <section id="situation" class="section-anchor">
+      <div class="situation-box">
+        <div class="situation-box-head">📍 Situation du texte</div>
+        <div class="situation-box-body">
+          Début de la pièce — <strong>scène d'exposition</strong>. Elle présente les personnages, le cadre (le château du Baron) et l'intrigue centrale : le retour de <strong>Perdican</strong> et <strong>Camille</strong>, que le Baron souhaite marier. C'est le Chœur qui prend en charge la présentation, ce qui constitue un procédé théâtral original et distancié.
+        </div>
+      </div>
+    </section>
+
+    <!-- ── PROB ── -->
+    <section id="prob" class="section-anchor">
+      <div class="prob-box">
+        <span class="prob-label">Problématique</span>
+        <p>En quoi cette scène remplit-elle les fonctions d'une scène d'exposition tout en étant profondément comique ?</p>
+      </div>
+    </section>
+
+    <!-- ── MV1 ── -->
+    <section id="mv1" class="section-anchor">
+      <div class="mv-item">
+        <div class="mv-header">
+          <div class="mv-num">I</div>
+          <div class="mv-title-group">
+            <h2>Portrait comique et ridicule de Blazius</h2>
+            <span class="mv-lines">Lignes 1 à 9</span>
+          </div>
+        </div>
+
+        <div class="bullet-stack">
+          <div class="bullet">
+            <b>Personnage fantoche</b>
+            <span>Blazius est présenté par le Chœur comme un ecclésiastique ridicule. Le champ lexical du sommeil et de la paresse (<span class="quote">bercé</span>, <span class="quote">se ballotte</span>, <span class="quote">yeux à demi-fermés</span>) en fait une <strong>marionnette grotesque</strong>.</span>
+          </div>
+          <div class="bullet">
+            <b>Satire religieuse</b>
+            <span>Musset critique la religion à travers ce prêtre plus attaché à son confort et au vin qu'à sa mission spirituelle. L'opposition entre sa <span class="quote">mule fringante</span> et son embonpoint souligne sa vanité.</span>
+          </div>
+          <div class="bullet">
+            <b>Ironie du Chœur</b>
+            <span>Le Chœur adopte un ton <strong>faussement respectueux</strong> pour mieux ridiculiser la lourdeur et l'importance que se donne Blazius — distance comique typique du proverbe.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── MV2 ── -->
+    <section id="mv2" class="section-anchor">
+      <div class="mv-item">
+        <div class="mv-header">
+          <div class="mv-num">II</div>
+          <div class="mv-title-group">
+            <h2>Éloge de Perdican</h2>
+            <span class="mv-lines">Lignes 10 à 22</span>
+          </div>
+        </div>
+
+        <div class="bullet-stack">
+          <div class="bullet">
+            <b>Héros romantique</b>
+            <span>Contrairement à Blazius, Perdican est décrit de manière méliorative. Il représente la jeunesse, l'intelligence et le succès (<span class="quote">docteur à vingt ans</span>) — idéal du jeune homme romantique.</span>
+          </div>
+          <div class="bullet">
+            <b>Enjeu de l'intrigue</b>
+            <span>Cet éloge prépare l'arrivée du personnage principal et justifie le projet de mariage du Baron. On comprend que <strong>Perdican est l'espoir de la famille</strong> et le centre de gravité de la pièce.</span>
+          </div>
+          <div class="bullet">
+            <b>Lyrisme parodique</b>
+            <span>Bien que l'éloge soit positif, le ton reste léger, presque trop parfait — ce qui <strong>maintient l'atmosphère de comédie</strong> et suggère qu'on ne doit pas le prendre tout à fait au sérieux.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── MV3 ── -->
+    <section id="mv3" class="section-anchor">
+      <div class="mv-item">
+        <div class="mv-header">
+          <div class="mv-num">III</div>
+          <div class="mv-title-group">
+            <h2>Retour à une réalité grotesque</h2>
+            <span class="mv-lines">Ligne 22 à la fin</span>
+          </div>
+        </div>
+
+        <div class="bullet-stack">
+          <div class="bullet">
+            <b>Trivialité de Blazius</b>
+            <span>Le personnage retombe dans ses travers dès qu'il s'exprime. Les impératifs (<span class="quote">buvez</span>, <span class="quote">reprenez</span>) révèlent une scène de boisson et de flatterie calculée pour plaire au Baron.</span>
+          </div>
+          <div class="bullet">
+            <b>Contraste avec Dame Pluche</b>
+            <span>L'arrivée de la gouvernante crée une <strong>symétrie comique</strong>. Elle est l'exact opposé de Blazius : maigre, acariâtre et agressive (<span class="quote">égratignent</span>, <span class="quote">trépignent</span>) — duo de caricatures.</span>
+          </div>
+          <div class="bullet">
+            <b>Indices tragiques</b>
+            <span>Malgré le comique ambiant, la tournure exclamative du Chœur (<span class="quote">Puissions-nous retrouver l'enfant…</span>) installe un doute — le <strong>passage de l'innocence à l'âge adulte</strong> présage que le badinage pourrait mal finir.</span>
+          </div>
+        </div>
+
+        <div class="tragic-note">
+          <div class="tragic-note-icon">⚠️</div>
+          <div class="tragic-note-text"><strong>À retenir :</strong> Le Chœur glisse ici les premiers indices du registre tragique qui viendra contaminer la comédie — caractéristique du <strong>drame romantique</strong> qui mêle les genres.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── CONCLUSION ── -->
+    <section id="conclusion" class="section-anchor">
+      <h2 class="section-heading">Bilan de l'étude</h2>
+
+      <div class="card-grid">
+        <div class="concl-card">
+          <div class="concl-card-head">Synthèse</div>
+          <div class="concl-card-body">La scène expose efficacement l'intrigue et les personnages. Les codes de la farce et de la caricature (Blazius, Dame Pluche) servent à critiquer les institutions — religion et éducation.</div>
+        </div>
+        <div class="concl-card">
+          <div class="concl-card-head">Double registre</div>
+          <div class="concl-card-body">Si l'atmosphère est joyeuse, Musset glisse des indices sur la perte de l'innocence — annonçant le mélange des genres (comédie et tragédie) propre au <em>drame romantique</em>.</div>
+        </div>
+        <div class="concl-card">
+          <div class="concl-card-head">Ouverture</div>
+          <div class="concl-card-body">Parallèle avec <em>Molière</em> pour le comique de caractère, mais modernité de Musset : il détourne le Chœur antique pour en faire un instrument ironique et distancié.</div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<script>
+function toggleTheme() {
+  const html = document.documentElement;
+  const dark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', dark ? 'light' : 'dark');
+  document.querySelector('.t-icon').textContent = dark ? '🌙' : '☀️';
+  document.getElementById('themeLabel').textContent = dark ? 'Mode sombre' : 'Mode clair';
+  localStorage.setItem('rh_theme', dark ? 'light' : 'dark');
+}
+
+const savedTheme = localStorage.getItem('rh_theme');
+if (savedTheme) {
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  if (savedTheme === 'dark') {
+    document.querySelector('.t-icon').textContent = '☀️';
+    document.getElementById('themeLabel').textContent = 'Mode clair';
+  }
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+const sections = document.querySelectorAll('.section-anchor');
+const navLinks = document.querySelectorAll('.nav-link');
+
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    if (pageYOffset >= s.offsetTop - 140) current = s.getAttribute('id');
+  });
+  navLinks.forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === '#' + current) link.classList.add('active');
+  });
+
+  const scrolled = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+  document.getElementById('progressBar').style.width = Math.min(scrolled, 100) + '%';
+}, { passive: true });
+</script>
+</body>
+</html>
