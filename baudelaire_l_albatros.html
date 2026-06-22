@@ -8,11 +8,11 @@
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 :root {
-  --bg: #f4f6f9;
+  --bg: #f5f4f0;
   --surface: #ffffff;
-  --ink: #0f172a;
-  --sub: #475569;
-  --line: #cbd5e1;
+  --ink: #111110;
+  --sub: #7a7a74;
+  --line: #e2e1db;
   --radius: 14px;
   --sidebar-width: 272px;
   --font-serif: 'DM Serif Display', Georgia, serif;
@@ -25,8 +25,8 @@
   --bg: #0f0f0e;
   --surface: #1a1a18;
   --ink: #eeede8;
-  --sub: #8a8a84;
-  --line: #2a2a28;
+  --sub: #8a8a80;
+  --line: #2a2a26;
 }
 html { scroll-behavior: smooth; }
 body {
@@ -34,7 +34,12 @@ body {
   background: var(--bg); color: var(--ink);
   min-height: 100vh; font-size: 15px; line-height: 1.6;
   -webkit-font-smoothing: antialiased;
-  display: flex; transition: background .3s, color .3s;
+  display: flex; transition: background .3s, color .3s; overflow-x: hidden;
+}
+body::before {
+  content: ''; position: fixed; inset: 0;
+  pointer-events: none; z-index: 9999; opacity: 0.4;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
 }
 aside {
   width: var(--sidebar-width); height: 100vh;
@@ -42,7 +47,7 @@ aside {
   background: var(--surface); border-right: 1px solid var(--line);
   padding: 1.8rem 1.4rem 2rem;
   display: flex; flex-direction: column;
-  z-index: 200; transition: background .3s, border-color .3s;
+  z-index: 200; transition: background .3s, border-color .3s, transform .3s;
   overflow-y: auto;
 }
 .sidebar-header { margin-bottom: 2.4rem; }
@@ -81,23 +86,33 @@ aside {
   font-weight: 600;
   border-color: color-mix(in srgb, var(--accent) 20%, transparent);
 }
-.sidebar-footer { margin-top: auto; padding-top: 1.2rem; border-top: 1px solid var(--line); }
+.nav-link-num {
+  font-size: 10px; font-weight: 600; opacity: .45;
+  min-width: 16px; font-family: var(--font-serif); font-style: italic;
+}
+.nav-link.active .nav-link-num { opacity: .7; }
+.sidebar-footer {
+  margin-top: auto; padding-top: 1.2rem;
+  border-top: 1px solid var(--line);
+}
 .theme-toggle {
   width: 100%; display: flex; align-items: center; gap: .6rem;
   background: none; border: 1px solid var(--line);
   border-radius: 10px; padding: .55rem .85rem;
   font-family: var(--font-sans); font-size: 12.5px;
   color: var(--sub); cursor: pointer;
+  transition: background .15s, border-color .15s, color .15s;
 }
 .theme-toggle:hover { background: var(--bg); border-color: var(--accent); color: var(--accent); }
 main { flex: 1; margin-left: var(--sidebar-width); max-width: calc(100% - var(--sidebar-width)); }
 .top-bar {
   position: sticky; top: 0; z-index: 100;
-  background: rgba(244,246,249,.88);
-  backdrop-filter: blur(12px);
+  background: rgba(245,244,240,.88);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--line);
   padding: .8rem 2.5rem;
   display: flex; align-items: center; justify-content: space-between;
+  transition: background .3s;
 }
 [data-theme="dark"] .top-bar { background: rgba(15,15,14,.88); }
 .breadcrumb { font-size: 12px; color: var(--sub); display: flex; align-items: center; gap: .4rem; }
@@ -110,6 +125,165 @@ main { flex: 1; margin-left: var(--sidebar-width); max-width: calc(100% - var(--
   background: var(--accent-bg); color: var(--accent);
   border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
 }
+.mob-menu-btn {
+  display: none; width: 34px; height: 34px;
+  align-items: center; justify-content: center;
+  background: none; border: 1px solid var(--line);
+  border-radius: 9px; cursor: pointer; font-size: 16px; color: var(--ink);
+}
+.content-body { max-width: 820px; margin: 0 auto; padding: 4rem 2.5rem 8rem; }
+.section-anchor { scroll-margin-top: 80px; margin-bottom: 5rem; }
+.hero-eyebrow {
+  font-size: 10.5px; font-weight: 600;
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: .55rem;
+  display: flex; align-items: center; gap: .5rem;
+}
+.hero-eyebrow::before {
+  content: ''; width: 18px; height: 2px;
+  background: var(--accent); border-radius: 1px;
+}
+h1 {
+  font-family: var(--font-serif);
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  line-height: 1.1; letter-spacing: -.02em;
+  font-weight: 400; margin: .7rem 0 1rem;
+}
+.hero-desc {
+  font-size: 1.05rem; color: var(--sub);
+  font-weight: 300; line-height: 1.65;
+  margin-bottom: 2.5rem; max-width: 580px;
+}
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem; margin-bottom: 1rem;
+}
+.card {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--radius); overflow: hidden;
+  transition: transform .2s cubic-bezier(.22,1,.36,1), box-shadow .2s, border-color .2s;
+}
+.card:hover {
+  transform: translateY(-3px); box-shadow: 0 12px 36px rgba(0,0,0,.1);
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+}
+.card-stripe { height: 4px; background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 55%, transparent)); }
+.card-body { padding: 1.35rem; }
+.card-body h3 {
+  font-family: var(--font-serif); font-size: 1.05rem;
+  margin-bottom: .65rem; color: var(--ink);
+  display: flex; align-items: center; gap: .5rem;
+}
+.card-body h3::before {
+  content: ''; width: 5px; height: 5px;
+  background: var(--accent); border-radius: 50%; flex-shrink: 0;
+}
+.card-body p { font-size: 13.5px; color: var(--sub); line-height: 1.6; font-weight: 300; }
+.card-body strong { color: var(--ink); font-weight: 600; }
+.quote {
+  font-style: italic; color: var(--accent-dark);
+  background: var(--accent-bg);
+  padding: .05rem .35rem; border-radius: 4px; font-size: 13px;
+}
+[data-theme="dark"] .quote { color: var(--accent); }
+.prob-box {
+  background: var(--accent-bg);
+  border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+  border-left: 4px solid var(--accent);
+  padding: 2rem 2.2rem; border-radius: var(--radius);
+  margin: 2.5rem 0;
+}
+.prob-box .prob-label {
+  font-size: 10px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .14em;
+  color: var(--accent); margin-bottom: .7rem; display: block;
+}
+.prob-box p {
+  font-family: var(--font-serif); font-size: 1.45rem;
+  color: var(--accent-dark); font-style: italic; line-height: 1.4;
+}
+[data-theme="dark"] .prob-box p { color: var(--accent); }
+.mv-item { margin-bottom: 4rem; }
+.mv-header {
+  display: flex; align-items: flex-start; gap: 1.2rem;
+  margin-bottom: 1.8rem; padding-bottom: 1.2rem;
+  border-bottom: 1px solid var(--line);
+}
+.mv-num {
+  width: 44px; height: 44px; background: var(--accent); color: #fff;
+  border-radius: 12px; display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-serif); font-size: 1.3rem;
+  font-style: italic; flex-shrink: 0;
+}
+.mv-title-group h2 {
+  font-family: var(--font-serif); font-size: 1.5rem;
+  font-weight: 400; line-height: 1.2;
+  letter-spacing: -.01em; margin-bottom: .3rem;
+}
+.mv-lines { font-size: 11.5px; color: var(--sub); font-style: italic; font-weight: 300; }
+.bullet-stack { display: flex; flex-direction: column; gap: .6rem; }
+.bullet {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: 12px; padding: 1.15rem 1.3rem;
+  display: grid; grid-template-columns: 165px 1fr;
+  gap: 1rem; align-items: start;
+  transition: border-color .15s, background .15s;
+}
+.bullet:hover {
+  border-color: color-mix(in srgb, var(--accent) 35%, transparent);
+  background: color-mix(in srgb, var(--accent-bg) 40%, var(--surface));
+}
+.bullet b {
+  font-size: 12px; font-weight: 600;
+  color: var(--accent); letter-spacing: .03em; padding-top: .05rem;
+}
+.bullet span {
+  font-size: 13.5px; color: var(--sub);
+  line-height: 1.6; font-weight: 300;
+}
+.note-box {
+  margin-top: 1rem;
+  background: color-mix(in srgb, var(--accent-bg) 50%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+  border-left: 3px solid var(--accent);
+  border-radius: 10px; padding: .9rem 1.2rem;
+  display: flex; gap: .7rem; align-items: flex-start;
+}
+.note-box-icon { font-size: 14px; flex-shrink: 0; margin-top: .1rem; }
+.note-box-text { font-size: 13px; color: var(--sub); line-height: 1.6; font-weight: 300; }
+.note-box-text strong { color: var(--accent); font-weight: 600; }
+.section-heading {
+  font-family: var(--font-serif); font-size: 1.9rem;
+  font-weight: 400; letter-spacing: -.015em; margin-bottom: 1.5rem;
+  display: flex; align-items: center; gap: .7rem;
+}
+.section-heading::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+.concl-card {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--radius); overflow: hidden;
+  transition: transform .2s cubic-bezier(.22,1,.36,1), box-shadow .2s, border-color .2s;
+}
+.concl-card:hover {
+  transform: translateY(-3px); box-shadow: 0 12px 36px rgba(0,0,0,.1);
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+}
+.concl-card-head {
+  padding: .6rem 1.2rem; background: var(--accent-bg);
+  border-bottom: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+  font-size: 10.5px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .1em; color: var(--accent);
+}
+.concl-card-body {
+  padding: 1.25rem 1.35rem; font-size: 13.5px;
+  color: var(--sub); line-height: 1.6; font-weight: 300;
+}
+.concl-card-body em { font-style: italic; color: var(--ink); }
+.progress-bar {
+  position: fixed; top: 0; left: 0; height: 3px;
+  background: var(--accent); z-index: 9997;
+  transition: width .1s; border-radius: 0 2px 2px 0;
+}
 .back-btn {
   display: inline-flex; align-items: center; gap: .35rem;
   text-decoration: none; color: var(--accent); font-size: 12.5px;
@@ -119,203 +293,282 @@ main { flex: 1; margin-left: var(--sidebar-width); max-width: calc(100% - var(--
   transition: background .15s;
 }
 .back-btn:hover { background: var(--accent-bg); }
-.content-body { max-width: 820px; margin: 0 auto; padding: 4rem 2.5rem 8rem; }
-.content-body h1 {
-  font-family: var(--font-serif);
-  font-size: 2.4rem; font-weight: 400;
-  letter-spacing: -.02em; line-height: 1.15;
-  margin-bottom: .6rem;
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
 }
-.content-body .subtitle {
-  font-size: 1rem; color: var(--sub);
-  margin-bottom: 2.5rem; font-style: italic;
-}
-.content-body h2 {
-  font-family: var(--font-serif);
-  font-size: 1.5rem; font-weight: 400;
-  margin: 2.5rem 0 .8rem;
-  padding-bottom: .3rem;
-  border-bottom: 1px solid var(--line);
-}
-.content-body h3 {
-  font-size: 1.05rem; font-weight: 600;
-  margin: 1.8rem 0 .5rem;
-  color: var(--accent);
-}
-.content-body p { margin-bottom: 1rem; }
-.content-body .quote {
-  background: var(--accent-bg);
-  border-left: 3px solid var(--accent);
-  padding: 1rem 1.4rem;
-  margin: 1rem 0;
-  border-radius: 0 8px 8px 0;
-  font-style: italic;
-}
-.content-body ul { margin: .5rem 0 1rem 1.5rem; }
-.content-body li { margin-bottom: .35rem; }
-.content-body .pbq {
-  background: var(--surface);
-  border: 1px solid var(--accent);
-  border-radius: var(--radius);
-  padding: 1.2rem 1.5rem;
-  margin: 1rem 0;
-  font-weight: 500;
-}
-@media (max-width: 720px) {
-  aside { transform: translateX(-100%); width: 100%; max-width: 300px; }
+@media (max-width: 768px) {
+  aside { transform: translateX(-100%); }
   aside.open { transform: translateX(0); }
   main { margin-left: 0; max-width: 100%; }
   .top-bar { padding: .8rem 1.2rem; }
   .content-body { padding: 2.5rem 1.2rem 6rem; }
+  .bullet { grid-template-columns: 1fr; gap: .3rem; }
+  .mob-menu-btn { display: flex !important; }
   .topbar-badges { display: none; }
 }
 </style>
 </head>
 <body>
 
-<aside>
+<div class="progress-bar" id="progressBar"></div>
+
+<aside id="sidebar">
   <div class="sidebar-header">
-    <div class="el-badge">EL 16</div>
-    <a href="index.html" class="sidebar-logo">Les Fleurs du Mal <em>·</em> Baudelaire</a>
+    <div class="el-badge">📖 EL 16 · Spleen et Idéal</div>
+    <a href="#intro" class="sidebar-logo">L'<em>Albatros</em></a>
+    <div style="margin-top:.45rem;font-size:11.5px;color:var(--sub);font-weight:300">Charles Baudelaire · 1857</div>
   </div>
+
+  <div class="sidebar-divider"></div>
+
   <nav>
     <div class="nav-group">
-      <span class="nav-label">Poème</span>
-      <a href="#intro" class="nav-link active"><span class="nav-link-num">01</span>Introduction</a>
-      <a href="#texte" class="nav-link"><span class="nav-link-num">02</span>Le texte</a>
-      <a href="#axe1" class="nav-link"><span class="nav-link-num">03</span>Confrontation de 2 mondes</a>
-      <a href="#axe2" class="nav-link"><span class="nav-link-num">04</span>Oiseau prisonnier</a>
-      <a href="#axe3" class="nav-link"><span class="nav-link-num">05</span>Un jeu mesquin et cruel</a>
-      <a href="#axe4" class="nav-link"><span class="nav-link-num">06</span>Poète exilé</a>
-      <a href="#conclu" class="nav-link"><span class="nav-link-num">07</span>Conclusion</a>
+      <span class="nav-label">Mise en place</span>
+      <a href="#intro" class="nav-link active"><span class="nav-link-num">01</span> Introduction</a>
+      <a href="#texte" class="nav-link"><span class="nav-link-num">02</span> Le texte</a>
+      <a href="#prob" class="nav-link"><span class="nav-link-num">03</span> Problématique</a>
+    </div>
+
+    <div class="nav-group">
+      <span class="nav-label">Analyse linéaire</span>
+      <a href="#mv1" class="nav-link"><span class="nav-link-num">I</span> Confrontation de 2 mondes</a>
+      <a href="#mv2" class="nav-link"><span class="nav-link-num">II</span> Oiseau prisonnier</a>
+      <a href="#mv3" class="nav-link"><span class="nav-link-num">III</span> Jeu mesquin et cruel</a>
+      <a href="#mv4" class="nav-link"><span class="nav-link-num">IV</span> Poète exilé</a>
+    </div>
+
+    <div class="nav-group">
+      <span class="nav-label">Bilan</span>
+      <a href="#conclusion" class="nav-link"><span class="nav-link-num">05</span> Conclusion</a>
     </div>
   </nav>
+
   <div class="sidebar-footer">
-    <button class="theme-toggle" onclick="toggleTheme()">☀️ Thème clair</button>
+    <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">
+      <span class="t-icon">🌙</span>
+      <span id="themeLabel">Mode sombre</span>
+    </button>
   </div>
 </aside>
 
 <main>
   <header class="top-bar">
     <div style="display:flex;align-items:center;gap:.8rem">
+      <button class="mob-menu-btn" onclick="toggleSidebar()">☰</button>
       <a href="index.html" class="back-btn">← Bibliothèque</a>
       <div class="breadcrumb">
-        Français <span>></span> Baudelaire <span>></span> <span style="color:var(--ink);font-weight:500">L'Albatros</span>
+        Français <span>›</span> Baudelaire <span>›</span> <span style="color:var(--ink);font-weight:500">L'Albatros</span>
       </div>
     </div>
     <div class="topbar-badges">
       <span class="topbar-tag">Baudelaire</span>
+      <span class="topbar-tag">1857</span>
       <span class="topbar-tag">Les Fleurs du Mal</span>
     </div>
   </header>
 
   <div class="content-body">
 
-    <h1>L'Albatros</h1>
-    <div class="subtitle">Charles Baudelaire — Les Fleurs du Mal (1857) — Section « Spleen et Idéal »</div>
+    <!-- ── INTRO ── -->
+    <section id="intro" class="section-anchor">
+      <div class="hero-eyebrow">Explication linéaire n°16 · Français</div>
+      <h1>L'<em style="font-style:italic;color:var(--sub)">Albatros</em></h1>
+      <p class="hero-desc">Troisième poème des <em>Fleurs du Mal</em>, extrait de la section « Spleen et Idéal ». L'albatros y est comparé à la figure du poète — étranger au monde qui l'entoure, incompris, « poète maudit ».</p>
 
-    <section id="intro">
-      <h2>Introduction</h2>
-      <p>Publié en 1857, <strong>« L'Albatros »</strong> est le troisième poème des <em>Fleurs du Mal</em>, après le prologue « Au lecteur », extrait de la section « Spleen et Idéal ». Ce poème de <strong>4 quatrains en alexandrins aux rimes croisées</strong> évoque l'homme déchiré entre l'aspiration à l'élévation (l'Idéal) et l'attirance pour la chute (le Spleen).</p>
-      <p>L'albatros est comparé à la figure du poète et à sa place dans la société : étranger au monde qui l'entoure, incompris — Baudelaire, poète maudit.</p>
-
-      <div class="pbq">
-        <strong>Problématiques :</strong>
-        <ul>
-          <li>Quelle image du poète Baudelaire donne-t-il dans son poème ?</li>
-          <li>Comment Baudelaire crée-t-il une allégorie du poète exilé ?</li>
-        </ul>
-      </div>
-
-      <h3>Mouvements de lecture</h3>
-      <ul>
-        <li>Confrontation de 2 mondes (1<sup>er</sup> quatrain)</li>
-        <li>Oiseau prisonnier des hommes (2<sup>e</sup> quatrain)</li>
-        <li>Un jeu mesquin et cruel (3<sup>e</sup> quatrain)</li>
-        <li>Assimilation du poète avec l'albatros (4<sup>e</sup> quatrain)</li>
-      </ul>
-    </section>
-
-    <section id="texte">
-      <h2>Le texte</h2>
-      <div class="quote">
-        Souvent, pour s'amuser, les hommes d'équipage<br>
-        Prennent des albatros, vastes oiseaux des mers,<br>
-        Qui suivent, indolents compagnons de voyage,<br>
-        Le navire glissant sur les gouffres amers.<br><br>
-        À peine les ont-ils déposés sur les planches,<br>
-        Que ces rois de l'azur, maladroits et honteux,<br>
-        Laissent piteusement leurs grandes ailes blanches<br>
-        Comme des avirons traîner à côté d'eux.<br><br>
-        Ce voyageur ailé, comme il est gauche et veule !<br>
-        Lui, naguère si beau, qu'il est comique et laid !<br>
-        L'un agace son bec avec un brûle-gueule,<br>
-        L'autre mime, en boitant, l'infirme qui volait !<br><br>
-        Le Poète est semblable au prince des nuées<br>
-        Qui hante la tempête et se rit de l'archer ;<br>
-        Exilé sur le sol au milieu des huées,<br>
-        Ses ailes de géant l'empêchent de marcher.
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-stripe"></div>
+          <div class="card-body">
+            <h3>Contexte</h3>
+            <p>1857 : publication des <em>Fleurs du Mal</em> qui provoque un <strong>scandale</strong> pour lequel Baudelaire est condamné. Le poème évoque l'homme déchiré entre l'aspiration à l'Idéal et l'attirance pour la chute (le Spleen).</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-stripe"></div>
+          <div class="card-body">
+            <h3>Forme poétique</h3>
+            <p><strong>4 quatrains en alexandrins</strong> aux rimes croisées. La structure en diptyque (description + allégorie) oppose nettement le ciel et la terre, la beauté et le ridicule, la liberté et la captivité.</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-stripe"></div>
+          <div class="card-body">
+            <h3>Le poète maudit</h3>
+            <p>Baudelaire élabore une <strong>allégorie de la condition du poète</strong> : être d'exception fait pour l'Idéal, mais incompris et rejeté par la société. Ses ailes de géant l'empêchent de marcher.</p>
+          </div>
+        </div>
       </div>
     </section>
 
-    <section id="axe1">
-      <h2>I. Confrontation de deux mondes</h2>
-      <ul>
-        <li><strong>Adverbe de temps « souvent »</strong> : récurrence de ce jeu cruel</li>
-        <li><strong>Opposition ciel / terre</strong> : deux univers distincts et inconciliables</li>
-        <li><strong>Oiseau</strong> : air et eau — fusion des deux univers (« vastes oiseaux des mers »)</li>
-        <li><strong>Hommes</strong> : terre — cruauté (« pour s'amuser » = CC de but)</li>
-        <li><strong>Rimes croisées</strong> : amplifient l'opposition</li>
-        <li><strong>Présent d'habitude</strong> : « prennent » — action répétée, presque rituelle</li>
-        <li><strong>Appositions à l'oiseau</strong> : description positive — grâce, grandeur, beauté majestueuse</li>
-        <li><strong>« compagnons de voyage »</strong> : amis fidèles, devenus prisonniers des hommes</li>
-        <li><strong>Périphrase « gouffre amers »</strong> : annonce une souffrance à venir</li>
-      </ul>
-    </section>
-
-    <section id="axe2">
-      <h2>II. Oiseau prisonnier des hommes</h2>
-      <ul>
-        <li><strong>« À peine… que »</strong> : locution conjonctive — immédiateté de la chute</li>
-        <li><strong>« sur les planches »</strong> : métonymie du lieu de captivité (le pont du navire)</li>
-        <li><strong>Vers 6/6 — opposition ciel et terre</strong> : deux hémistiches — majestueux dans le ciel (rois), maladroits sur le pont</li>
-        <li><strong>« rois de l'azur »</strong> : grandeur céleste</li>
-        <li><strong>« maladroits et honteux »</strong> : humiliation immédiate</li>
-        <li><strong>Comparaison « comme des avirons »</strong> : ailes immenses devenues inutiles, encombrantes</li>
-      </ul>
-    </section>
-
-    <section id="axe3">
-      <h2>III. Un jeu mesquin et cruel</h2>
-      <ul>
-        <li>Verbes d'action cruelle : « agace », « mime » — violence gratuite des hommes</li>
-        <li>Humiliation et moquerie : le ridicule de la situation</li>
-        <li>Banalité de la cruauté : jeu quotidien des marins — indifférence</li>
-        <li>Passage du « ils » au « l'un… l'autre » : individualisation de la cruauté</li>
-      </ul>
-      <div class="quote">
-        « Ce voyageur ailé, comme il est gauche et veule !<br>
-        Lui, naguère si beau, qu'il est comique et laid ! »
+    <!-- ── TEXTE ── -->
+    <section id="texte" class="section-anchor">
+      <div class="situation-box">
+        <div class="situation-box-head">📜 Le texte</div>
+        <div class="situation-box-body" style="font-style:italic;line-height:2">
+          Souvent, pour s'amuser, les hommes d'équipage<br>
+          Prennent des albatros, vastes oiseaux des mers,<br>
+          Qui suivent, indolents compagnons de voyage,<br>
+          Le navire glissant sur les gouffres amers.<br><br>
+          À peine les ont-ils déposés sur les planches,<br>
+          Que ces rois de l'azur, maladroits et honteux,<br>
+          Laissent piteusement leurs grandes ailes blanches<br>
+          Comme des avirons traîner à côté d'eux.<br><br>
+          Ce voyageur ailé, comme il est gauche et veule !<br>
+          Lui, naguère si beau, qu'il est comique et laid !<br>
+          L'un agace son bec avec un brûle-gueule,<br>
+          L'autre mime, en boitant, l'infirme qui volait !<br><br>
+          Le Poète est semblable au prince des nuées<br>
+          Qui hante la tempête et se rit de l'archer ;<br>
+          Exilé sur le sol au milieu des huées,<br>
+          Ses ailes de géant l'empêchent de marcher.
+        </div>
       </div>
     </section>
 
-    <section id="axe4">
-      <h2>IV. Assimilation du poète avec l'albatros</h2>
-      <ul>
-        <li><strong>Le Poète avec une majuscule</strong> : figure emblématique, allégorique</li>
-        <li><strong>Comparaison explicite</strong> : « est semblable au prince des nuées » — l'albatros devient symbole</li>
-        <li><strong>« prince des nuées »</strong> : noblesse, élévation, appartenance au ciel</li>
-        <li><strong>« qui hante la tempête et se rit de l'archer »</strong> : courage, liberté, puissance</li>
-        <li><strong>« Exilé sur le sol au milieu des huées »</strong> : solitude, incompréhension, rejet</li>
-        <li><strong>« Ses ailes de géant l'empêchent de marcher »</strong> : le génie poétique est un fardeau dans un monde médiocre</li>
-      </ul>
-      <p>Le poème élabore une <strong>allégorie de la condition du poète</strong> : être d'exception, fait pour l'idéal et l'élévation, mais incompris et rejeté par la société, dont la grandeur même est la cause de l'exil et de la souffrance.</p>
+    <!-- ── PROB ── -->
+    <section id="prob" class="section-anchor">
+      <div class="prob-box">
+        <span class="prob-label">Problématique</span>
+        <p>Quelle image du poète Baudelaire donne-t-il dans son poème, et comment crée-t-il une allégorie du poète exilé ?</p>
+      </div>
     </section>
 
-    <section id="conclu">
-      <h2>Conclusion</h2>
-      <p>« L'Albatros » est un poème emblématique de la condition du poète selon Baudelaire : être sublime et maudit, dont le génie même l'empêche de vivre dans un monde médiocre. L'albatros, « prince des nuées » devenu objet de risée sur le pont du navire, est une allégorie puissante de l'artiste incompris.</p>
-      <p>Ce poème, par sa structure en diptyque (description + allégorie), par la force de ses images et par la musicalité de ses alexandrins, illustre parfaitement la dualité fondatrice des <em>Fleurs du Mal</em> : le Spleen et l'Idéal, l'élévation et la chute.</p>
+    <!-- ── MV1 ── -->
+    <section id="mv1" class="section-anchor">
+      <div class="mv-item">
+        <div class="mv-header">
+          <div class="mv-num">I</div>
+          <div class="mv-title-group">
+            <h2>Confrontation de deux mondes</h2>
+            <span class="mv-lines">Premier quatrain</span>
+          </div>
+        </div>
+
+        <div class="bullet-stack">
+          <div class="bullet">
+            <b>L'opposition ciel / terre</b>
+            <span>Deux univers distincts et inconciliables s'affrontent d'emblée. Le premier vers est consacré aux hommes (terre, cruauté), le second aux oiseaux (air, beauté). Les <strong>rimes croisées</strong> amplifient cette opposition.</span>
+          </div>
+          <div class="bullet">
+            <b>L'albatros, roi du ciel</b>
+            <span>Qualifié par deux appositions : <span class="quote">vastes oiseaux des mers</span> (grandeur, liberté) et <span class="quote">indolents compagnons de voyage</span> (beauté majestueuse et calme). L'albatros fusionne les éléments air et eau.</span>
+          </div>
+          <div class="bullet">
+            <b>Les hommes, prédateurs cruels</b>
+            <span><span class="quote">Pour s'amuser</span> : le but est le divertissement cruel. Le verbe <span class="quote">prennent</span> au présent d'habitude suggère un jeu répété, presque rituel. La périphrase <span class="quote">gouffres amers</span> annonce la souffrance.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── MV2 ── -->
+    <section id="mv2" class="section-anchor">
+      <div class="mv-item">
+        <div class="mv-header">
+          <div class="mv-num">II</div>
+          <div class="mv-title-group">
+            <h2>L'oiseau prisonnier des hommes</h2>
+            <span class="mv-lines">Second quatrain</span>
+          </div>
+        </div>
+
+        <div class="bullet-stack">
+          <div class="bullet">
+            <b>La chute immédiate</b>
+            <span><span class="quote">À peine… que</span> : locution conjonctive exprimant l'immédiateté de la chute. <span class="quote">Sur les planches</span> (métonymie du pont du navire) s'oppose au ciel infini.</span>
+          </div>
+          <div class="bullet">
+            <b>L'humiliation</b>
+            <span><span class="quote">Ces rois de l'azur</span> (majesté céleste) deviennent <span class="quote">maladroits et honteux</span>. La comparaison <span class="quote">comme des avirons</span> réduit leurs ailes à des rames inutiles et encombrantes.</span>
+          </div>
+          <div class="bullet">
+            <b>Le vers 6/6</b>
+            <span>L'opposition entre les deux hémistiches du vers 6 est frappante : « rois de l'azur » (majesté) / « maladroits et honteux » (déchéance). La chute est totale et immédiate.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── MV3 ── -->
+    <section id="mv3" class="section-anchor">
+      <div class="mv-item">
+        <div class="mv-header">
+          <div class="mv-num">III</div>
+          <div class="mv-title-group">
+            <h2>Un jeu mesquin et cruel</h2>
+            <span class="mv-lines">Troisième quatrain</span>
+          </div>
+        </div>
+
+        <div class="bullet-stack">
+          <div class="bullet">
+            <b>Moquerie et humiliation</b>
+            <span>Les exclamations (<span class="quote">comme il est gauche et veule !</span>, <span class="quote">qu'il est comique et laid !</span>) soulignent le contraste avec la beauté céleste d'avant. Le ridicule de la situation est accentué.</span>
+          </div>
+          <div class="bullet">
+            <b>Violence gratuite</b>
+            <span>Les verbes <span class="quote">agace</span> et <span class="quote">mime</span> décrivent une cruauté banale, presque enfantine. <span class="quote">L'un… l'autre</span> individualise les bourreaux, rendant la scène plus concrète et cruelle.</span>
+          </div>
+          <div class="bullet">
+            <b>Le comique et le tragique mêlés</b>
+            <span>Le jeu des marins est grotesque, mais la souffrance de l'oiseau est réelle. Ce mélange des registres (comique / tragique) est caractéristique de l'esthétique baudelairienne.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── MV4 ── -->
+    <section id="mv4" class="section-anchor">
+      <div class="mv-item">
+        <div class="mv-header">
+          <div class="mv-num">IV</div>
+          <div class="mv-title-group">
+            <h2>L'assimilation du poète à l'albatros</h2>
+            <span class="mv-lines">Quatrième quatrain — la chute allégorique</span>
+          </div>
+        </div>
+
+        <div class="bullet-stack">
+          <div class="bullet">
+            <b>Le Poète avec majuscule</b>
+            <span>Le dernier quatrain opère un basculement : l'albatros devient l'emblème du Poète. La comparaison explicite (« est semblable au prince des nuées ») transforme l'anecdote en <strong>allégorie</strong>.</span>
+          </div>
+          <div class="bullet">
+            <b>Prince des nuées</b>
+            <span>Le poète est un être d'exception, fait pour l'Idéal (<span class="quote">hante la tempête</span>), libre et puissant (<span class="quote">se rit de l'archer</span>). Sa noblesse est céleste, son domaine est l'infini.</span>
+          </div>
+          <div class="bullet">
+            <b>L'exil sur le sol</b>
+            <span><span class="quote">Exilé sur le sol au milieu des huées</span> : la société rejette le poète, se moque de lui parce qu'il est différent. <span class="quote">Ses ailes de géant l'empêchent de marcher</span> — le génie poétique devient un fardeau.</span>
+          </div>
+        </div>
+
+        <div class="note-box">
+          <div class="note-box-icon">💡</div>
+          <div class="note-box-text"><strong>Le paradoxe du poète maudit :</strong> La grandeur même du poète (ses ailes de géant) est la cause de son exil. L'Idéal ne peut vivre dans un monde médiocre. Le poème illustre parfaitement la dualité fondatrice des <em>Fleurs du Mal</em> : Spleen et Idéal.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── CONCLUSION ── -->
+    <section id="conclusion" class="section-anchor">
+      <h2 class="section-heading">Bilan de l'étude</h2>
+
+      <div class="card-grid">
+        <div class="concl-card">
+          <div class="concl-card-head">Synthèse</div>
+          <div class="concl-card-body">Un poème emblématique de la condition du poète selon Baudelaire : être sublime et maudit, dont le génie même l'empêche de vivre dans un monde médiocre. <em>L'albatros comme allégorie de l'artiste incompris.</em></div>
+        </div>
+        <div class="concl-card">
+          <div class="concl-card-head">Structure</div>
+          <div class="concl-card-body">Le diptyque (description + allégorie), la force des images, la musicalité des alexandrins illustrent la dualité Spleen / Idéal — l'élévation et la chute, la beauté et le ridicule.</div>
+        </div>
+        <div class="concl-card">
+          <div class="concl-card-head">Ouverture</div>
+          <div class="concl-card-body">À rapprocher du mythe d'Icare (les ailes brûlées) et de la figure de l'<em>artiste maudit</em> reprise par Verlaine, Rimbaud et toute la modernité poétique. L'albatros est l'ancêtre du <em>Bateau ivre</em>.</div>
+        </div>
+      </div>
     </section>
 
   </div>
@@ -324,27 +577,36 @@ main { flex: 1; margin-left: var(--sidebar-width); max-width: calc(100% - var(--
 <script>
 function toggleTheme() {
   const html = document.documentElement;
-  const isDark = html.getAttribute('data-theme') === 'dark';
-  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
-  document.querySelector('.theme-toggle').textContent = isDark ? '☀️ Thème clair' : '🌙 Thème sombre';
+  const dark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', dark ? 'light' : 'dark');
+  document.querySelector('.t-icon').textContent = dark ? '🌙' : '☀️';
+  document.getElementById('themeLabel').textContent = dark ? 'Mode sombre' : 'Mode clair';
+  localStorage.setItem('rh_theme', dark ? 'light' : 'dark');
 }
-document.querySelectorAll('.nav-link').forEach(link => {
-  link.addEventListener('click', () => {
-    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-    link.classList.add('active');
-    if (window.innerWidth <= 720) document.querySelector('aside').classList.remove('open');
-  });
-});
+const savedTheme = localStorage.getItem('rh_theme');
+if (savedTheme) {
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  if (savedTheme === 'dark') {
+    document.querySelector('.t-icon').textContent = '☀️';
+    document.getElementById('themeLabel').textContent = 'Mode clair';
+  }
+}
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+const sections = document.querySelectorAll('.section-anchor');
+const navLinks = document.querySelectorAll('.nav-link');
 window.addEventListener('scroll', () => {
-  const sections = document.querySelectorAll('section');
   let current = '';
   sections.forEach(s => {
-    if (window.scrollY >= s.offsetTop - 120) current = s.id;
+    if (pageYOffset >= s.offsetTop - 140) current = s.getAttribute('id');
   });
-  document.querySelectorAll('.nav-link').forEach(link => {
+  navLinks.forEach(link => {
     link.classList.remove('active');
     if (link.getAttribute('href') === '#' + current) link.classList.add('active');
   });
+  const scrolled = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+  document.getElementById('progressBar').style.width = Math.min(scrolled, 100) + '%';
 }, { passive: true });
 </script>
 </body>
